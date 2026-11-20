@@ -1,23 +1,7 @@
 # Aurora Connect v02
 
-Painel responsivo de mobilidade urbana, em português, com mapa interativo, busca de lugares, geolocalização e planejamento de rotas.
+Aplicativo responsivo de mobilidade urbana para a Bahia. O projeto foi organizado na pasta [`aurora-connect-v02/`](./aurora-connect-v02/).
 
-## Como usar
+Abra [`aurora-connect-v02/index.html`](./aurora-connect-v02/index.html) em um navegador com internet. O app oferece mapa, busca de lugares, geolocalização, cálculo de rotas e atalhos para os canais oficiais do Detran-BA, Seinfra-BA, PRF e DNIT.
 
-Abra `index.html` em um navegador moderno ou publique a raiz do repositório no GitHub Pages. A conexão com a internet é necessária para carregar o mapa e consultar os serviços de geocodificação e rotas.
-
-## Funcionalidades
-
-- Mapa OpenStreetMap com ocorrências ilustrativas de trânsito.
-- Busca de endereço ou lugar usando Nominatim.
-- Planejamento de rota de carro usando OSRM, com distância e duração estimada.
-- Localização do dispositivo, mediante permissão do navegador.
-- Layout adaptável para celular e desktop.
-
-## Sobre os dados de trânsito
-
-Os marcadores, alertas e linhas coloridas de tráfego são **ilustrativos** e não representam condições reais ao vivo. O cálculo OSRM fornece uma rota e estimativa de duração, mas não inclui previsão de trânsito em tempo real. Para oferecer tráfego real, será preciso integrar um provedor de dados de trânsito e respeitar os limites e termos de uso de cada serviço. Nominatim e o servidor público OSRM são serviços comunitários e podem limitar solicitações; para produção, use provedores próprios ou serviços com SLA.
-
-## Tecnologias
-
-HTML, CSS, JavaScript, Leaflet, OpenStreetMap, Nominatim e OSRM. Não é necessário instalar dependências para executar a versão inicial.
+**Atenção:** os avisos de trânsito exibidos no mapa são demonstrativos. Os links oficiais são referências para consulta; o aplicativo ainda não importa nem valida automaticamente os avisos desses órgãos.

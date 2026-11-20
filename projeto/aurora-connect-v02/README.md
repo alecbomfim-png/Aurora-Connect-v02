@@ -19,6 +19,7 @@ O mapa, a busca de endereços e o cálculo de rotas dependem de serviços extern
 ## O que já funciona
 
 - Mapa interativo centralizado em Salvador.
+- Alternância entre mapa de ruas OpenStreetMap e imagens de satélite Esri World Imagery.
 - Busca de lugar/endereço e localização do dispositivo.
 - Cálculo de rota de carro com distância e duração estimada.
 - Atalhos para os sites oficiais do Detran-BA, Seinfra-BA, PRF e DNIT.

@@ -35,6 +35,14 @@ As linhas e ocorrências no mapa são **exemplos visuais**, não representam tr�
 ## Aurora Explore — atrativos e rotas
 
 - `explore.html` pesquisa atrações turísticas, pontos históricos, parques e locais naturais próximos à posição GPS autorizada pelo usuário.
-- Usa dados do OpenStreetMap consultados pela Overpass API; busca em raio de 30 km, ordena por distância e permite calcular uma rota de carro até o local selecionado pelo OSRM público.
+- Usa dados do OpenStreetMap consultados pela Overpass API; busca em raio de 30 km, ordena resultados por distância e permite calcular uma rota de carro até o local selecionado pelo OSRM público.
 - Se o usuário já concedeu permissão de geolocalização, a página tenta atualizar a busca ao abrir quando há conexão; caso contrário, solicita a localização após ação do usuário. Ao voltar a conexão, atualiza os resultados.
 - A localização não é rastreada continuamente. Resultados podem estar incompletos/desatualizados e o roteamento depende de serviço externo; não é navegação certificada nem instrução de segurança.
+
+## Aurora Vision Network — catálogo e homologação de fontes
+
+- A página `vision-network.html` organiza órgãos e portais oficiais candidatos a futuras integrações de câmeras e dados viários.
+- O catálogo inicial inclui Transalvador, DETRAN-BA, SEINFRA-BA, DNIT e PRF, com links para seus portais oficiais.
+- A inclusão de um órgão não confirma a existência de stream público, API, parceria ou autorização. Nesta etapa, nenhuma câmera ou transmissão ao vivo está conectada; os contadores começam em zero.
+- Antes de integrar uma fonte, verificar na origem o tipo de conteúdo, cobertura, atualização, autenticação, termos de uso e autorização expressa para exibição, armazenamento, análise e redistribuição.
+- Registrar timestamp e estado offline/online; nunca apresentar imagem estática ou antiga como vídeo ao vivo. Aplicar controles de privacidade e requisitos da LGPD.

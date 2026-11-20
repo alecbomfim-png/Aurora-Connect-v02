@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101a27">
+<title>Aurora Connect V02 — Road Sense funcional (simulação)</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1420;--panel:#142235;--line:#2b4057;--blue:#55a9ff;--mint:#7ce0b1;--amber:#ffd16b;--red:#ff7777;--white:#f3f7fc;--muted:#a7b8ca}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#1d3d60 0,#0b1420 60%);color:var(--white);font:15px system-ui,-apple-system,sans-serif}
+header,main{max-width:1100px;margin:auto}header{padding:16px;border-bottom:1px solid #ffffff18;display:flex;justify-content:space-between;gap:12px;align-items:center}.brand{font-size:19px;font-weight:800}.brand span{color:var(--blue)}.tag{font-size:10px;color:var(--mint);border:1px solid #7ce0b155;border-radius:30px;padding:6px 9px}
+main{padding:22px 16px 40px}h1{font-size:clamp(25px,4vw,36px);margin:0 0 7px}p{color:var(--muted);line-height:1.5}.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(270px,.8fr);gap:15px}.stage,.panel{background:#142235;border:1px solid var(--line);border-radius:16px;overflow:hidden}.stage-head{padding:13px 15px;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);font-weight:700}.stage-head small{color:var(--mint);font-weight:500}.scene{height:480px;position:relative;overflow:hidden;background:linear-gradient(#8db8d4 0%,#d2dce0 38%,#45675c 39%,#1a2936 100%)}
+.road{position:absolute;left:50%;bottom:-8%;width:82%;height:92%;transform:translateX(-50%) perspective(230px) rotateX(28deg);transform-origin:bottom;background:linear-gradient(90deg,#303944,#414b56 49%,#303944);clip-path:polygon(39% 0,61% 0,100% 100%,0 100%)}
+.road:before,.road:after{content:"";position:absolute;top:0;bottom:0;width:4px;background:#f6f0d0}.road:before{left:39%}.road:after{right:39%}.center{position:absolute;top:0;bottom:0;left:50%;width:5px;background:repeating-linear-gradient(to bottom,#fff3c8 0 28px,transparent 28px 55px);transform:translateX(-50%)}
+.car{position:absolute;z-index:3;font-size:clamp(32px,5vw,48px);transform:translateX(-50%);filter:drop-shadow(0 7px 4px #0009);will-change:top,left}.ego{left:62%;bottom:25px;font-size:56px}.opposite{left:39%;top:5%;opacity:0}.lead{left:62%;top:10%;opacity:0}.hud{position:absolute;z-index:5;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.pill{background:#0b1728e8;border:1px solid #ffffff35;padding:7px 9px;border-radius:10px;font-size:11px}
+.alert{display:none;position:absolute;z-index:6;left:50%;top:51%;transform:translate(-50%,-50%);width:min(88%,360px);padding:14px;text-align:center;border-radius:13px;background:#411e22ed;border:1px solid var(--red);box-shadow:0 8px 30px #0009}.alert.show{display:block}.alert strong{display:block}.alert small{color:#ffd5d5}
+.panel{padding:16px}.panel h2{margin:0 0 5px;font-size:18px}.panel p{font-size:12px;margin:0 0 14px}.field{margin:13px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px}select,button,input{width:100%;padding:11px;border-radius:10px;font:inherit}select{background:#0d1a2a;color:white;border:1px solid #45617d}button{border:0;background:var(--blue);color:#071729;font-weight:750;cursor:pointer;margin-top:8px}button.secondary{background:#243b54;color:white;border:1px solid #45617d}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid white;outline-offset:2px}.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}.status{padding:12px;border-radius:11px;background:#0d1a2a;border:1px solid var(--line);margin-top:12px}.status b{display:block;font-size:13px}.status span{font-size:12px;color:var(--muted)}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.metric{padding:10px;border-radius:10px;background:#0d1a2a;border:1px solid var(--line)}.metric small{display:block;color:var(--muted);font-size:10px}.metric strong{font-size:17px}.note{font-size:11px!important;color:#ffe6ad!important;background:#332b19;border:1px solid #8a6a31;padding:11px;border-radius:10px;margin-top:14px!important}
+@media(max-width:720px){.layout{grid-template-columns:1fr}.scene{height:410px}.tag{max-width:130px;text-align:center}}
+</style>
+</head>
+<body>
+<header><div class="brand">✦ aurora <span>connect</span> V02</div><div class="tag">ROAD SENSE · PROTÓTIPO FUNCIONAL</div></header>
+<main>
+<h1>Road Sense — simulação de movimento</h1>
+<p>Agora os veículos se movimentam durante a execução do cenário. Você pode iniciar, pausar e reiniciar a simulação e acompanhar os indicadores programados.</p>
+<div class="layout">
+<section class="stage"><div class="stage-head"><span>Visão da pista em perspectiva</span><small id="sceneName">Cenário: circulação normal</small></div>
+<div class="scene" role="img" aria-label="Simulação de rodovia em perspectiva com veículos animados">
+<div class="road"><div class="center"></div></div>
+<div class="hud"><div class="pill">🧭 Faixa de referência: direita</div><div class="pill" id="runState">● PRONTO · SIMULAÇÃO</div></div>
+<div class="car ego" aria-hidden="true">🚘</div><div class="car opposite" id="opposite" aria-hidden="true">🚗</div><div class="car lead" id="lead" aria-hidden="true">🚙</div>
+<div class="alert" id="alert" role="alert"><strong id="alertTitle">⚠ Atenção</strong><small id="alertText">Aviso demonstrativo.</small></div>
+</div></section>
+<aside class="panel"><h2>Central de cenários</h2><p>Escolha uma situação e controle a movimentação dos veículos.</p>
+<div class="field"><label for="scenario">Cenário de teste</label><select id="scenario"><option value="normal">1 — Circulação normal</option><option value="opposite">2 — Veículo em sentido contrário</option><option value="overtake">3 — Tentativa de ultrapassagem arriscada</option><option value="lead">4 — Veículo à frente</option></select></div>
+<div class="field"><label for="speed">Velocidade da animação: <strong id="speedValue">1,0×</strong></label><input id="speed" type="range" min="0.5" max="2" step="0.5" value="1"></div>
+<div class="controls"><button id="start">▶ Iniciar</button><button class="secondary" id="pause" disabled>Ⅱ Pausar</button></div>
+<button class="secondary" id="reset">↺ Reiniciar cenário</button>
+<div class="metrics"><div class="metric"><small>TEMPO DE SIMULAÇÃO</small><strong id="clock">0,0 s</strong></div><div class="metric"><small>ESTADO DO CENÁRIO</small><strong id="risk">Normal</strong></div></div>
+<div class="status" aria-live="polite"><b id="statusTitle">Pronto para testar</b><span id="statusText">Escolha um cenário e toque em iniciar.</span></div>
+<p class="note"><b>Limite de segurança:</b> esta é uma simulação local com movimentos e situações programados. Não recebe imagens de câmeras, radar, GPS ou dados de trânsito real. Não detecta veículos reais, não calcula distância real e não deve ser usada durante a condução nem como assistência para decidir ultrapassagens.</p>
+</aside>
+</div></main>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const state={scenario:'normal',running:false,elapsed:0,last:0,raf:0,speed:1,alerted:false};
+function setStatus(title,message,risk){$('statusTitle').textContent=title;$('statusText').textContent=message;$('risk').textContent=risk;}
+function stop(){state.running=false;if(state.raf)cancelAnimationFrame(state.raf);state.raf=0;$('start').disabled=false;$('pause').disabled=true;$('runState').textContent='Ⅱ PAUSADO';}
+function reset(){
+ stop();state.elapsed=0;state.alerted=false;state.last=0;
+ $('opposite').style.opacity='0';$('lead').style.opacity='0';
+ $('opposite').style.top='5%';$('opposite').style.left='39%';$('lead').style.top='10%';$('lead').style.left='62%';
+ $('alert').classList.remove('show');$('clock').textContent='0,0 s';$('runState').textContent='● PRONTO · SIMULAÇÃO';
+ $('sceneName').textContent='Cenário: '+$('scenario').selectedOptions[0].text.replace(/^\d+ — /,'');
+ if(state.scenario==='normal')setStatus('Cenário normal pronto','Nenhum veículo de risco programado.','Normal');
+ else setStatus('Cenário carregado','Toque em iniciar para movimentar os veículos ilustrativos.','Aguardando');
+}
+function showAlert(title,message){$('alertTitle').textContent=title;$('alertText').textContent=message;$('alert').classList.add('show');}
+function frame(now){
+ if(!state.running)return;
+ if(!state.last)state.last=now;
+ const dt=Math.min((now-state.last)/1000,.05)*state.speed;state.last=now;state.elapsed+=dt;
+ const t=state.elapsed;
+ $('clock').textContent=t.toFixed(1).replace('.',',')+' s';
+ if(state.scenario==='opposite'){
+   $('opposite').style.opacity='1';$('opposite').style.top=(5+Math.min(t*10,49))+'%';
+   if(t>2.2&&!state.alerted){state.alerted=true;showAlert('⚠ Veículo em sentido contrário','Aproximação ilustrativa programada. Não é detecção real.');setStatus('Veículo oposto em movimento','Aviso visual acionado pelo roteiro de simulação.','Atenção');}
+ }
+ if(state.scenario==='overtake'){
+   $('opposite').style.opacity='1';$('opposite').style.left=(48-Math.min(t*2,8))+'%';$('opposite').style.top=(8+Math.min(t*12,45))+'%';
+   if(t>1.4&&!state.alerted){state.alerted=true;showAlert('⛔ Ultrapassagem — risco ilustrativo','Veículo oposto aproximando-se no cenário. Não tente ultrapassar.');setStatus('Risco de ultrapassagem simulado','Alerta acionado por evento programado.','Risco alto');}
+ }
+ if(state.scenario==='lead'){
+   $('lead').style.opacity='1';$('lead').style.top=(10+Math.min(t*8,34))+'%';
+   if(t>2&&!state.alerted){state.alerted=true;showAlert('⚠ Veículo à frente','Aproximação visual programada; sem medição real de distância.');setStatus('Veículo à frente em movimento','Cenário para futura avaliação com sensores validados.','Atenção');}
+ }
+ if(t>=9){stop();$('runState').textContent='✓ CENÁRIO CONCLUÍDO';setStatus('Cenário concluído','Toque em reiniciar para repetir a simulação.',$('risk').textContent);return;}
+ state.raf=requestAnimationFrame(frame);
+}
+$('scenario').addEventListener('change',()=>{state.scenario=$('scenario').value;reset();});
+$('speed').addEventListener('input',e=>{state.speed=Number(e.target.value);$('speedValue').textContent=state.speed.toFixed(1).replace('.',',')+'×';});
+$('start').addEventListener('click',()=>{
+ if(state.running)return;
+ if(state.elapsed>=9)reset();
+ state.running=true;state.last=0;$('start').disabled=true;$('pause').disabled=false;$('runState').textContent='● SIMULAÇÃO EM ANDAMENTO';
+ setStatus('Simulação em andamento','Os elementos visuais estão se movimentando.','Em execução');
+ state.raf=requestAnimationFrame(frame);
+});
+$('pause').addEventListener('click',()=>{stop();setStatus('Simulação pausada','O movimento foi interrompido. Toque em iniciar para continuar.','Pausado');});
+$('reset').addEventListener('click',reset);
+state.scenario=$('scenario').value;reset();
+})();
+</script>
+</body>
+</html>

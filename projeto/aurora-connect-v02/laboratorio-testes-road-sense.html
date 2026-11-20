@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101a27">
+<title>Aurora Connect V02 — Laboratório de Testes Road Sense</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1420;--panel:#142235;--line:#2b4057;--blue:#55a9ff;--mint:#7ce0b1;--amber:#ffd16b;--red:#ff7777;--white:#f3f7fc;--muted:#a7b8ca}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#1d3d60 0,#0b1420 60%);color:var(--white);font:15px system-ui,-apple-system,sans-serif}
+header,main{max-width:1050px;margin:auto}header{padding:18px 16px;border-bottom:1px solid #ffffff18;display:flex;justify-content:space-between;gap:12px;align-items:center}.brand{font-size:19px;font-weight:800}.brand span{color:var(--blue)}.tag{font-size:10px;color:var(--mint);border:1px solid #7ce0b155;border-radius:30px;padding:6px 9px}
+main{padding:22px 16px 40px}h1{font-size:clamp(25px,4vw,36px);margin:0 0 7px}p{color:var(--muted);line-height:1.5}.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,.8fr);gap:15px}.stage,.panel{background:#142235;border:1px solid var(--line);border-radius:16px;overflow:hidden}.stage-head{padding:13px 15px;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);font-weight:700}.stage-head small{color:var(--mint);font-weight:500}.scene{height:470px;position:relative;overflow:hidden;background:linear-gradient(#8db8d4 0%,#d2dce0 38%,#45675c 39%,#1a2936 100%)}
+.road{position:absolute;left:50%;bottom:-8%;width:82%;height:92%;transform:translateX(-50%) perspective(230px) rotateX(28deg);transform-origin:bottom;background:linear-gradient(90deg,#303944,#414b56 49%,#303944);clip-path:polygon(39% 0,61% 0,100% 100%,0 100%)}
+.road:before,.road:after{content:"";position:absolute;top:0;bottom:0;width:4px;background:#f6f0d0}.road:before{left:39%}.road:after{right:39%}.center{position:absolute;top:0;bottom:0;left:50%;width:5px;background:repeating-linear-gradient(to bottom,#fff3c8 0 28px,transparent 28px 55px);transform:translateX(-50%)}
+.car{position:absolute;z-index:3;font-size:clamp(32px,5vw,48px);transform:translateX(-50%);filter:drop-shadow(0 7px 4px #0009);transition:all .5s}.ego{left:62%;bottom:28px;font-size:56px}.opposite{left:39%;top:30%;opacity:0}.lead{left:62%;top:25%;opacity:0}.hud{position:absolute;z-index:5;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.pill{background:#0b1728e8;border:1px solid #ffffff35;padding:7px 9px;border-radius:10px;font-size:11px}
+.alert{display:none;position:absolute;z-index:6;left:50%;top:51%;transform:translate(-50%,-50%);width:min(88%,340px);padding:14px;text-align:center;border-radius:13px;background:#411e22ed;border:1px solid var(--red);box-shadow:0 8px 30px #0009}.alert.show{display:block}.alert strong{display:block}.alert small{color:#ffd5d5}
+.panel{padding:16px}.panel h2{margin:0 0 5px;font-size:18px}.panel p{font-size:12px;margin:0 0 14px}.field{margin:13px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px}select,button{width:100%;padding:11px;border-radius:10px;font:inherit}select{background:#0d1a2a;color:white;border:1px solid #45617d}button{border:0;background:var(--blue);color:#071729;font-weight:750;cursor:pointer;margin-top:8px}button.secondary{background:#243b54;color:white;border:1px solid #45617d}button:focus-visible,select:focus-visible{outline:3px solid white;outline-offset:2px}.status{padding:12px;border-radius:11px;background:#0d1a2a;border:1px solid var(--line);margin-top:12px}.status b{display:block;font-size:13px}.status span{font-size:12px;color:var(--muted)}.note{font-size:11px!important;color:#ffe6ad!important;background:#332b19;border:1px solid #8a6a31;padding:11px;border-radius:10px;margin-top:14px!important}
+@media(max-width:720px){.layout{grid-template-columns:1fr}.scene{height:410px}.tag{max-width:120px;text-align:center}}
+</style>
+</head>
+<body>
+<header><div class="brand">✦ aurora <span>connect</span> V02</div><div class="tag">LABORATÓRIO DE TESTES · ROAD SENSE</div></header>
+<main>
+<h1>Teste de cenários da estrada</h1>
+<p>Modelo demonstrativo para verificar a apresentação visual dos veículos nos dois sentidos e os avisos de risco antes de integrar sensores reais.</p>
+<div class="layout">
+<section class="stage"><div class="stage-head"><span>Visão da pista em perspectiva</span><small id="sceneName">Cenário: circulação normal</small></div>
+<div class="scene" role="img" aria-label="Simulação visual de uma rodovia com duas faixas e veículos ilustrativos">
+<div class="road"><div class="center"></div></div>
+<div class="hud"><div class="pill">🧭 Sua faixa: direita</div><div class="pill">3D · simulação local</div></div>
+<div class="car ego">🚘</div><div class="car opposite" id="opposite">🚗</div><div class="car lead" id="lead">🚙</div>
+<div class="alert" id="alert" role="alert"><strong id="alertTitle">⚠ Atenção</strong><small id="alertText">Aviso demonstrativo.</small></div>
+</div></section>
+<aside class="panel"><h2>Central de cenários</h2><p>Escolha uma situação para observar como o painel reage.</p>
+<div class="field"><label for="scenario">Cenário de teste</label><select id="scenario"><option value="normal">1 — Circulação normal</option><option value="opposite">2 — Veículo vindo em sentido contrário</option><option value="overtake">3 — Tentativa de ultrapassagem com veículo oposto</option><option value="lead">4 — Veículo à frente na mesma faixa</option></select></div>
+<button id="run">Executar cenário</button><button class="secondary" id="reset">Reiniciar simulação</button>
+<div class="status" aria-live="polite"><b id="statusTitle">Pronto para testar</b><span id="statusText">Selecione um cenário e toque em executar.</span></div>
+<p class="note"><b>Limite de segurança:</b> este é um modelo visual com situações programadas. Os veículos e alertas não vêm de câmeras, radar, GPS ou trânsito real. Não use como assistência durante a condução e não interprete os avisos como prevenção real de acidentes.</p>
+</aside>
+</div></main>
+<script>
+const $=id=>document.getElementById(id);
+function reset(){ $('opposite').style.opacity='0';$('lead').style.opacity='0';$('opposite').style.top='30%';$('opposite').style.left='39%';$('lead').style.top='25%';$('alert').classList.remove('show');$('sceneName').textContent='Cenário: circulação normal';$('statusTitle').textContent='Simulação reiniciada';$('statusText').textContent='Nenhum risco ilustrativo ativo.'; }
+$('run').addEventListener('click',()=>{
+ reset();
+ const s=$('scenario').value;
+ if(s==='normal'){$('sceneName').textContent='Cenário: circulação normal';$('statusTitle').textContent='Condição demonstrativa normal';$('statusText').textContent='Nenhum veículo de risco foi apresentado neste cenário.';return;}
+ if(s==='opposite'){$('opposite').style.opacity='1';$('opposite').style.top='54%';$('alertTitle').textContent='⚠ Veículo em sentido contrário';$('alertText').textContent='Objeto ilustrativo na faixa oposta. Não é detecção real.';$('statusTitle').textContent='Veículo oposto representado';$('statusText').textContent='O painel apresenta um aviso visual de atenção.';}
+ if(s==='overtake'){$('opposite').style.opacity='1';$('opposite').style.top='52%';$('opposite').style.left='48%';$('alertTitle').textContent='⛔ Ultrapassagem — risco ilustrativo';$('alertText').textContent='Cenário simulado: veículo oposto próximo. Não tente ultrapassar.';$('statusTitle').textContent='Alerta de risco de ultrapassagem';$('statusText').textContent='A simulação destaca a aproximação de um veículo no sentido contrário.';}
+ if(s==='lead'){$('lead').style.opacity='1';$('lead').style.top='43%';$('alertTitle').textContent='⚠ Veículo à frente';$('alertText').textContent='Representação visual de veículo na mesma faixa.';$('statusTitle').textContent='Veículo à frente representado';$('statusText').textContent='Cenário visual para futura avaliação de distância e aproximação.';}
+ if(s!=='normal')$('alert').classList.add('show');
+});
+$('reset').addEventListener('click',reset);
+</script>
+</body>
+</html>

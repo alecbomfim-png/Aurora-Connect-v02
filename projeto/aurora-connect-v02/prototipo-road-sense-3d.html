@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101a27">
+<title>Aurora Connect V02 — Road Sense 3D (protótipo)</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1420;--panel:#142235;--line:#2b4057;--blue:#55a9ff;--mint:#7ce0b1;--amber:#ffd16b;--red:#ff7777;--white:#f3f7fc;--muted:#a7b8ca}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#1d3d60 0,#0b1420 60%);color:var(--white);font:15px system-ui,-apple-system,sans-serif;min-height:100vh}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px max(18px,calc((100vw - 1050px)/2));border-bottom:1px solid #ffffff18;background:#0b1420aa}
+.brand{font-weight:800;font-size:20px;letter-spacing:.2px}.brand span{color:var(--blue)}.tag{font-size:11px;color:var(--mint);border:1px solid #7ce0b155;border-radius:30px;padding:6px 10px}
+main{max-width:1050px;margin:auto;padding:22px 16px 40px}.intro h1{font-size:clamp(25px,4vw,38px);margin:5px 0}.intro p{color:var(--muted);line-height:1.55;margin:0 0 18px}
+.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,.8fr);gap:16px}.stage,.panel{background:linear-gradient(145deg,#17283d,#101c2c);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 18px 55px #0005}.stage-head{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);font-weight:700}.mode{font-size:11px;color:var(--mint)}
+.scene{height:510px;position:relative;overflow:hidden;background:linear-gradient(#8db8d4 0%,#d2dce0 38%,#516d64 39%,#1a2936 100%)}
+.sun{position:absolute;width:65px;height:65px;border-radius:50%;background:#ffe6a4;top:40px;right:15%;box-shadow:0 0 55px #ffe6a477}
+.hill{position:absolute;bottom:42%;width:70%;height:160px;background:#456b64;clip-path:polygon(0 100%,25% 15%,45% 80%,70% 0,100% 100%);opacity:.9}.hill.two{right:-12%;bottom:40%;transform:scaleX(-1);background:#36574f}
+.road{position:absolute;left:50%;bottom:-10%;width:78%;height:90%;transform:translateX(-50%) perspective(230px) rotateX(28deg);transform-origin:bottom;background:linear-gradient(90deg,#303944,#414b56 48%,#303944);clip-path:polygon(39% 0,61% 0,100% 100%,0 100%);border-left:3px solid #d9e2e9}
+.road:before,.road:after{content:"";position:absolute;top:0;bottom:0;width:4px;background:#f6f0d0}.road:before{left:39%}.road:after{right:39%}
+.centerline{position:absolute;top:0;bottom:0;left:50%;width:5px;background:repeating-linear-gradient(to bottom,#fff3c8 0 30px,transparent 30px 58px);transform:translateX(-50%)}
+.car{position:absolute;z-index:3;font-size:clamp(28px,5vw,46px);filter:drop-shadow(0 8px 4px #0008);transform:translateX(-50%)}.mycar{left:50%;bottom:38px;font-size:58px}.oncoming{left:57%;top:42%;animation:approach 7s ease-in-out infinite alternate}.ahead{left:43%;top:25%;font-size:30px;opacity:.9}
+@keyframes approach{from{top:37%;transform:translateX(-50%) scale(.65)}to{top:65%;transform:translateX(-50%) scale(1.05)}}
+.hud{position:absolute;z-index:5;left:14px;right:14px;top:14px;display:flex;justify-content:space-between;gap:8px}.pill{background:#0b1728df;border:1px solid #ffffff28;padding:8px 11px;border-radius:12px;font-size:11px;backdrop-filter:blur(8px)}
+.warning{position:absolute;z-index:6;left:50%;top:48%;transform:translate(-50%,-50%);width:min(85%,330px);text-align:center;padding:13px;border-radius:14px;background:#411e22ee;border:1px solid #ff7777;color:#fff;box-shadow:0 8px 35px #0008;display:none}.warning.show{display:block}.warning strong{display:block;font-size:15px}.warning small{display:block;color:#ffd5d5;margin-top:4px}
+.panel{padding:17px}.panel h2{font-size:17px;margin:0 0 6px}.panel>p{font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 15px}.metric{padding:12px;border-radius:12px;background:#0d1a2a;border:1px solid var(--line);margin-bottom:9px}.metric b{display:block;font-size:13px}.metric small{color:var(--muted);font-size:11px}.actions{display:grid;gap:8px;margin-top:14px}button{border:0;border-radius:10px;padding:12px;font-weight:700;background:var(--blue);color:#071729;font-size:13px;cursor:pointer}button.secondary{background:#243b54;color:var(--white);border:1px solid #45617d}button:focus-visible{outline:3px solid white;outline-offset:2px}.notice{margin-top:14px;padding:12px;border-radius:12px;background:#332b19;border:1px solid #8a6a31;color:#ffe6ad;font-size:11px;line-height:1.5}.foot{color:var(--muted);font-size:11px;margin-top:15px;line-height:1.5}
+@media(max-width:720px){.layout{grid-template-columns:1fr}.scene{height:440px}.panel{order:2}header{padding:15px 16px}}
+</style>
+</head>
+<body>
+<header><div class="brand">✦ aurora <span>connect</span> V02</div><div class="tag">PROTÓTIPO VISUAL · ROAD SENSE</div></header>
+<main><section class="intro"><h1>Uma nova visão da estrada.</h1><p>Conceito de condução em perspectiva 3D, com representação de faixas e veículos nos dois sentidos.</p></section>
+<div class="layout"><section class="stage"><div class="stage-head"><span>Visão da pista</span><span class="mode">SIMULAÇÃO DEMONSTRATIVA</span></div><div class="scene" aria-label="Ilustração em perspectiva de uma rodovia com veículos nos dois sentidos"><div class="sun"></div><div class="hill"></div><div class="hill two"></div><div class="road"><div class="centerline"></div></div><div class="hud"><div class="pill">🧭 Sentido da viagem · faixa direita</div><div class="pill">3D · conceito</div></div><div class="car ahead">🚙</div><div class="car oncoming">🚗</div><div class="car mycar">🚘</div><div class="warning" id="warning" role="alert"><strong>⚠ Veículo em sentido contrário</strong><small>Alerta ilustrativo de risco — não é uma detecção real.</small></div></div></section>
+<aside class="panel"><h2>Road Sense</h2><p>Camada conceitual de assistência ao motorista.</p><div class="metric"><b>🚘 Seu veículo</b><small>Representação visual na faixa de circulação</small></div><div class="metric"><b>🚗 Sentido oposto</b><small>Veículo ilustrativo animado na pista contrária</small></div><div class="metric"><b>⚠ Alerta de ultrapassagem</b><small>Exemplo de aviso preventivo, acionado manualmente</small></div><div class="actions"><button id="alertBtn">Testar alerta demonstrativo</button><button class="secondary" id="clearBtn">Limpar alerta</button></div><div class="notice"><b>Importante:</b> esta tela é somente um protótipo visual. Não usa câmera, radar, GPS de outros veículos nem sensores; não detecta carros reais e não deve ser usada durante a condução.</div><p class="foot">Para transformar o conceito em assistência real, serão necessários sensores ou câmeras apropriados, processamento validado, testes em ambiente controlado e avaliação de segurança. O alerta nunca deve ser tratado como garantia contra colisões.</p></aside></div></main>
+<script>
+const warning=document.getElementById('warning');document.getElementById('alertBtn').addEventListener('click',()=>warning.classList.add('show'));document.getElementById('clearBtn').addEventListener('click',()=>warning.classList.remove('show'));
+</script>
+</body></html>

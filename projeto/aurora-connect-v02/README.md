@@ -56,3 +56,14 @@ As linhas e ocorrências no mapa são **exemplos visuais**, não representam tr�
 - Define campos de identificação, tipo, coordenadas, via, quilômetro, sentido, datas de observação/publicação, validade, status, gravidade, fonte, permissão de uso, confiança e verificação.
 - Os dados históricos e periódicos são destinados a contexto e análise de risco histórico; não devem ser apresentados como ocorrências ao vivo nem alimentar alertas instantâneos sem fonte operacional atual.
 - O módulo não recomenda ultrapassagens. Alertas de manobra exigirão dados atuais, confiáveis, validação independente e respeito ao CTB.
+
+## Aurora Road Guard — alertas preventivos
+
+- A página `road-guard.html` define a camada de avisos preventivos para curvas com histórico de acidentes, radares, limites sinalizados, lombadas, travessias, buracos, alagamentos, obras e obstáculos.
+- A PRF disponibiliza dados abertos de acidentes em CSV e informa atualização mensal da base BAT. Esses dados podem apoiar análise histórica georreferenciada, inclusive por causa do acidente, mas não indicam ocorrências atuais.
+- A ANTT mantém conjuntos de dados rodoviários sobre radares, sinalização de velocidade e proibição de ultrapassagem, sensores de tráfego e CFTV; cada conjunto precisa de validação de cobertura, atualização e licença antes do uso.
+- Os alertas devem identificar claramente a natureza da evidência: histórico, infraestrutura cadastrada, relato recente ou fonte operacional em tempo real.
+- Cada perigo terá identificador, tipo, coordenadas, via/km/sentido, nível de risco, fundamento, data de observação, validade, fonte, verificação, texto de voz e distância de antecedência.
+- Eventos históricos não podem ser apresentados como acidentes atuais. Relatos de buracos e obstáculos precisam de timestamp, confirmação e expiração.
+- O módulo não deve induzir frenagem brusca, desvio perigoso ou ultrapassagem; recomenda atenção, redução gradual quando segura, respeito à sinalização e manutenção de distância.
+- A página atual documenta regras e exemplos; ingestão automática da PRF e alertas operacionais em tempo real ainda não estão implementados.

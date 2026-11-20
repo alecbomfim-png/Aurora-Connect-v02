@@ -4,7 +4,7 @@
   "short_name": "Aurora",
   "description": "Mapa, localização e planejamento de rotas.",
   "lang": "pt-BR",
-  "start_url": "./",
+  "start_url": "./painel-navegacao.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",

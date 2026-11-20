@@ -1,0 +1,20 @@
+{
+  "name": "Aurora Connect V02",
+  "short_name": "Aurora Connect",
+  "description": "Mobilidade e assistência demonstrativa de segurança viária.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#101511",
+  "theme_color": "#101611",
+  "icons": [
+    {
+      "src": "./icons/aurora-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

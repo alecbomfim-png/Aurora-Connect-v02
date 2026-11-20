@@ -1,7 +1,10 @@
 # Aurora Connect v02
 
-Aplicativo responsivo de mobilidade urbana para a Bahia. O projeto foi organizado na pasta [`aurora-connect-v02/`](./aurora-connect-v02/).
+O projeto foi organizado em [`projeto/aurora-connect-v02/`](./projeto/aurora-connect-v02/).
 
-Abra [`aurora-connect-v02/index.html`](./aurora-connect-v02/index.html) em um navegador com internet. O app oferece mapa, busca de lugares, geolocalização, cálculo de rotas e atalhos para os canais oficiais do Detran-BA, Seinfra-BA, PRF e DNIT.
+## Estrutura
 
-**Atenção:** os avisos de trânsito exibidos no mapa são demonstrativos. Os links oficiais são referências para consulta; o aplicativo ainda não importa nem valida automaticamente os avisos desses órgãos.
+- [`projeto/aurora-connect-v02/index.html`](./projeto/aurora-connect-v02/index.html) — aplicação web.
+- [`projeto/aurora-connect-v02/README.md`](./projeto/aurora-connect-v02/README.md) — documentação.
+
+A raiz do repositório redireciona automaticamente para o aplicativo.

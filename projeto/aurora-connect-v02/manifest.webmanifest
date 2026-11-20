@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "Aurora Connect",
+  "short_name": "Aurora",
+  "description": "Mapa, localização e planejamento de rotas.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#101611",
+  "theme_color": "#101611",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

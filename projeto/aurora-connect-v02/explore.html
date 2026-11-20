@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07110a"><title>Aurora Explore · Aurora Connect V02</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{color-scheme:dark;--bg:#07110a;--panel:#101d13;--line:#315333;--green:#63ff35;--lime:#c4ff68;--muted:#b8c8b5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#183c18,#07110a 65%);color:#f4fff1;font:15px system-ui,sans-serif}header{padding:17px max(16px,calc((100% - 1100px)/2));background:#030905;border-bottom:1px solid var(--line)}.brand{font-weight:900;color:var(--green);letter-spacing:.04em}.wrap{max-width:1100px;margin:auto;padding:18px}.back{color:var(--lime)}h1{font-size:clamp(25px,4vw,36px);margin:12px 0 5px}.muted{color:var(--muted);line-height:1.5}.panel{background:#0c180f;border:1px solid var(--line);border-radius:15px;padding:16px;margin:14px 0}.actions{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}button{border:1px solid var(--green);border-radius:10px;background:#142918;color:white;padding:11px 14px;font-weight:800;cursor:pointer}button.primary{background:var(--green);color:#071006}button:disabled{opacity:.55}.status{background:#142117;border-radius:10px;padding:12px;color:#dcebd8;min-height:42px}.layout{display:grid;grid-template-columns:minmax(260px,.85fr) minmax(0,1.4fr);gap:14px}.list{display:grid;gap:9px;max-height:650px;overflow:auto}.poi{background:#111f14;border:1px solid #29452b;border-radius:11px;padding:12px}.poi b{color:var(--lime)}.poi small{display:block;color:var(--muted);margin-top:5px}.poi button{margin-top:9px;padding:8px 10px;font-size:12px}#map{height:610px;border-radius:12px;overflow:hidden}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters label{font-size:12px;color:#dcebd8}.filters input{accent-color:var(--green)}.warning{border-left:4px solid #e4c14b;background:#28220e;color:#fff0b2;padding:12px;border-radius:7px;line-height:1.5}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#122016;color:white}.leaflet-control-attribution{font-size:9px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}#map{height:390px}.list{max-height:none}}
+</style></head><body>
+<header><div class="brand">🦖 AURORA CONNECT V02</div><div>Explore · Atrativos e paradas no caminho</div></header>
+<main class="wrap"><a class="back" href="./painel-navegacao.html">← Voltar ao painel</a><h1>Descubra o que existe ao seu redor</h1>
+<p class="muted">Quando o Aurora estiver online e você autorizar a localização, ele poderá buscar atrações, pontos históricos, parques e locais de interesse próximos. Escolha um ponto para traçar uma rota até ele.</p>
+<section class="panel"><b>Busca inteligente de atrativos</b><div class="actions"><button id="locate" class="primary">◎ Ativar localização e buscar</button><button id="refresh">↻ Atualizar busca</button><button id="clear">Limpar rota</button></div>
+<div class="filters"><label><input type="checkbox" value="tourism" checked> Turismo e atrações</label><label><input type="checkbox" value="historic" checked> História e cultura</label><label><input type="checkbox" value="leisure" checked> Parques e lazer</label><label><input type="checkbox" value="natural" checked> Natureza</label></div>
+<div class="status" id="status" role="status" aria-live="polite">Aguardando localização. A busca usa dados abertos e precisa de internet.</div></section>
+<div class="layout"><section class="panel"><b>Locais encontrados</b><p class="muted" id="count">Nenhum local listado ainda.</p><div id="results" class="list"></div></section><section class="panel"><b>Mapa e trajeto</b><p class="muted">Sua posição e o caminho até o atrativo selecionado aparecem aqui.</p><div id="map"></div></section></div>
+<p class="warning"><b>Importante:</b> os dados de locais vêm do OpenStreetMap e podem estar incompletos ou desatualizados. A rota é uma sugestão calculada por serviço externo; confirme acesso, funcionamento, condições da via e sinalização. A localização só é usada após autorização do aparelho. Não mantenha o celular na mão enquanto dirige.</p>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
+const statusEl=document.getElementById('status'),resultsEl=document.getElementById('results'),countEl=document.getElementById('count');
+const map=L.map('map').setView([-12.429,-38.337],11);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
+let origin=null,originMarker=null,routeLayer=null,poiLayers=[],places=[];
+const overpass='https://overpass-api.de/api/interpreter';
+function dist(a,b){const R=6371000,rad=x=>x*Math.PI/180,d1=rad(b.lat-a.lat),d2=rad(b.lon-a.lon),q=Math.sin(d1/2)**2+Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(d2/2)**2;return 2*R*Math.asin(Math.sqrt(q))}
+function pretty(m){return m<1000?Math.round(m)+' m':(m/1000).toFixed(1).replace('.',',')+' km'}
+function selected(){return [...document.querySelectorAll('.filters input:checked')].map(x=>x.value)}
+function clearPoi(){poiLayers.forEach(x=>map.removeLayer(x));poiLayers=[];resultsEl.innerHTML='';places=[]}
+async function searchPois(){
+ if(!navigator.onLine){statusEl.textContent='Sem internet. Conecte-se para buscar atrativos online.';return}
+ if(!origin){statusEl.textContent='Ative a localização para procurar atrativos próximos.';return}
+ const cats=selected();if(!cats.length){statusEl.textContent='Selecione pelo menos uma categoria.';return}
+ statusEl.textContent='Pesquisando atrações próximas…';clearPoi();
+ const tags={tourism:['attraction','museum','gallery','viewpoint','zoo','theme_park','aquarium','artwork'],historic:['monument','memorial','castle','archaeological_site','ruins','museum'],leisure:['park','garden','water_park','nature_reserve'],natural:['beach','waterfall','cave','peak','spring','wood']}
+ const clauses=[];for(const cat of cats){for(const v of tags[cat])clauses.push('node(around:30000,'+origin.lat+','+origin.lon+')["'+cat+'"="'+v+'"];','way(around:30000,'+origin.lat+','+origin.lon+')["'+cat+'"="'+v+'"];','relation(around:30000,'+origin.lat+','+origin.lon+')["'+cat+'"="'+v+'"];')}
+ const query='[out:json][timeout:25];('+clauses.join('')+');out center tags;';
+ try{
+  const res=await fetch(overpass,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:'data='+encodeURIComponent(query)});
+  if(!res.ok)throw new Error('Overpass HTTP '+res.status);
+  const json=await res.json();const seen=new Set();
+  places=(json.elements||[]).map(e=>{const lat=e.lat??e.center?.lat,lon=e.lon??e.center?.lon;if(lat==null||lon==null)return null;const key=e.type+'/'+e.id;if(seen.has(key))return null;seen.add(key);return {id:key,lat,lon,tags:e.tags||{},name:e.tags?.name||e.tags?.['name:pt']||'Atrativo sem nome',distance:dist(origin,{lat,lon})}}).filter(Boolean).sort((a,b)=>a.distance-b.distance).slice(0,60);
+  if(!places.length){statusEl.textContent='Nenhum atrativo cadastrado foi encontrado em 30 km. Tente outras categorias ou amplie a busca no futuro.';countEl.textContent='0 locais encontrados';return}
+  places.forEach((p,i)=>{const marker=L.circleMarker([p.lat,p.lon],{radius:7,color:'#baff61',weight:2,fillColor:'#17351a',fillOpacity:1}).bindPopup('<b>'+p.name+'</b><br>'+pretty(p.distance)+' de distância').addTo(map);poiLayers.push(marker);
+   const cat=Object.keys(p.tags).filter(k=>['tourism','historic','leisure','natural'].includes(k)).map(k=>p.tags[k]).join(' · ')||'Ponto de interesse';
+   const card=document.createElement('article');card.className='poi';const title=document.createElement('b');title.textContent=p.name;const meta=document.createElement('small');meta.textContent=cat+' · '+pretty(p.distance);const btn=document.createElement('button');btn.textContent='Traçar rota até aqui';btn.addEventListener('click',()=>routeTo(p));card.append(title,meta,btn);resultsEl.append(card);
+  });
+  countEl.textContent=places.length+' atrativo(s) encontrados em até 30 km, ordenados por proximidade.';statusEl.textContent='Busca concluída. Escolha um atrativo para calcular o trajeto.';const bounds=L.latLngBounds([[origin.lat,origin.lon],...places.map(p=>[p.lat,p.lon])]);map.fitBounds(bounds.pad(.12));
+ }catch(err){statusEl.textContent='Não foi possível consultar os dados agora: '+err.message+'. Tente novamente em instantes.'}
+}
+async function routeTo(p){
+ if(!origin){statusEl.textContent='Localização inicial indisponível.';return}
+ statusEl.textContent='Calculando rota para '+p.name+'…';
+ try{const url='https://router.project-osrm.org/route/v1/driving/'+origin.lon+','+origin.lat+';'+p.lon+','+p.lat+'?overview=full&geometries=geojson&steps=true';
+ const res=await fetch(url);if(!res.ok)throw new Error('Serviço de rota HTTP '+res.status);const data=await res.json();if(data.code!=='Ok'||!data.routes?.length)throw new Error('Rota não encontrada');
+ if(routeLayer)map.removeLayer(routeLayer);const route=data.routes[0];routeLayer=L.geoJSON(route.geometry,{style:{color:'#62f5a2',weight:6,opacity:.9}}).addTo(map);map.fitBounds(routeLayer.getBounds().pad(.15));
+ const km=(route.distance/1000).toFixed(1).replace('.',',');const min=Math.round(route.duration/60);statusEl.textContent='Rota sugerida até '+p.name+': '+km+' km · aproximadamente '+min+' min. Confirme o trajeto e as condições reais antes de sair.';
+ }catch(err){statusEl.textContent='Não foi possível calcular a rota: '+err.message}
+}
+function getLocation(){if(!navigator.geolocation){statusEl.textContent='Este aparelho não disponibiliza GPS pelo navegador.';return}
+ statusEl.textContent='Solicitando autorização de localização…';navigator.geolocation.getCurrentPosition(pos=>{origin={lat:pos.coords.latitude,lon:pos.coords.longitude};if(originMarker)map.removeLayer(originMarker);originMarker=L.circleMarker([origin.lat,origin.lon],{radius:9,color:'#fff',weight:3,fillColor:'#55ff35',fillOpacity:1}).bindPopup('Sua localização autorizada').addTo(map);map.setView([origin.lat,origin.lon],12);searchPois()},err=>{statusEl.textContent=err.code===1?'Permissão de localização negada. Autorize nas configurações do navegador para buscar perto de você.':'Não foi possível obter GPS. Verifique o sinal e tente novamente.'},{enableHighAccuracy:true,timeout:15000,maximumAge:60000})}
+document.getElementById('locate').addEventListener('click',getLocation);document.getElementById('refresh').addEventListener('click',()=>origin?searchPois():getLocation());document.getElementById('clear').addEventListener('click',()=>{if(routeLayer)map.removeLayer(routeLayer);routeLayer=null;statusEl.textContent='Rota removida. Seus atrativos continuam no mapa.'});
+window.addEventListener('online',()=>{statusEl.textContent='Internet disponível. Atualizando atrativos…';if(origin)searchPois()});window.addEventListener('offline',()=>{statusEl.textContent='Sem conexão. A busca online foi pausada.'});
+document.addEventListener('DOMContentLoaded',()=>{if(navigator.onLine&&navigator.permissions?.query){navigator.permissions.query({name:'geolocation'}).then(p=>{if(p.state==='granted')getLocation()}).catch(()=>{})}});
+</script></body></html>

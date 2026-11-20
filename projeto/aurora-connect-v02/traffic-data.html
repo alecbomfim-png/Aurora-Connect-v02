@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#050b08">
+<meta name="description" content="Aurora Connect V02 — dados públicos de infraestrutura, tráfego e segurança viária.">
+<title>Aurora Road Intelligence · Aurora Connect V02</title>
+<style>
+:root{color-scheme:dark;--green:#55ff28;--lime:#b8ff38;--bg:#050b08;--panel:#0b1710;--line:#28532a;--muted:#b9c9b6;--yellow:#ffe18a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#173c13,#050b08 65%);color:#f5fff2;font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:18px max(18px,calc((100% - 1120px)/2));border-bottom:1px solid var(--line);background:#020805ef}
+a{color:var(--lime)}button{border:1px solid var(--green);border-radius:10px;background:#102314;color:#f5fff2;padding:10px 14px;font-weight:800;cursor:pointer}button:disabled{opacity:.5;cursor:wait}
+.wrap{max-width:1120px;margin:auto;padding:22px 18px 50px}.brand{color:var(--green);font-weight:950;letter-spacing:.05em}h1{font-size:clamp(26px,5vw,40px);margin:12px 0 5px}.sub,p{line-height:1.55;color:#d4e3d0}.sub{color:var(--muted);margin-top:0}
+.panel{background:#09130d;border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 8px 28px #0005}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:12px}.tile{background:#0d1a11;border:1px solid #29472c;border-radius:12px;padding:14px}.tile h3{margin:0 0 7px;color:var(--lime);font-size:17px}.tile p{font-size:13px;margin:5px 0}.tag{display:inline-block;border:1px solid #62704a;border-radius:20px;padding:3px 8px;font-size:11px;color:#e7efcb;margin:2px 3px 2px 0}
+.note{border-left:4px solid #e9c52d;padding:12px 14px;background:#241f0c;color:#fff0b4;border-radius:7px}.status{padding:12px;background:#111f14;border:1px solid #29472c;border-radius:10px;color:#d8ebd3;margin:12px 0;min-height:44px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}.button{display:inline-block;border:1px solid var(--green);border-radius:10px;padding:10px 14px;text-decoration:none;font-weight:800;background:#102314}
+.data-list{display:grid;gap:8px}.record{padding:12px;border:1px solid #29472c;border-radius:10px;background:#0d1a11;overflow-wrap:anywhere}.record b{color:var(--lime)}.record small{color:var(--muted)}.record pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:170px;overflow:auto;font-size:11px;color:#d4e3d0}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:10px;border-bottom:1px solid #29472c;vertical-align:top}th{color:var(--lime)}
+footer{font-size:12px;color:var(--muted);margin-top:25px}
+@media(max-width:600px){.wrap{padding:16px 12px 35px}.panel{padding:14px}table{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+<header><div class="brand">🦖 AURORA CONNECT V02</div><div>Road Intelligence · Dados de trânsito e rodovias</div></header>
+<main class="wrap">
+<a href="./painel-navegacao.html">← Voltar ao painel de navegação</a>
+<h1>🚦 Aurora Road Intelligence</h1>
+<p class="sub">Camada de dados públicos para infraestrutura, equipamentos rodoviários, segurança e futuras informações operacionais.</p>
+
+<section class="panel">
+<h2>Fontes públicas com recursos estruturados</h2>
+<p>As duas bases ANTT abaixo possuem arquivos JSON oficiais. O Aurora tenta carregar os cadastros diretamente do portal; se a política do navegador bloquear a consulta, os links oficiais continuam disponíveis para abrir os dados.</p>
+<div class="grid">
+<article class="tile"><h3>ANTT · Sensores de tráfego</h3><span class="tag">JSON</span><span class="tag">Licença CC BY</span><p>Cadastro de equipamentos de sensoriamento de tráfego nas rodovias concedidas. Não significa medição instantânea de velocidade ou fluxo neste momento.</p><p><b>Dados atualizados:</b> 28/09/2026</p><a href="https://dados.antt.gov.br/dataset/1235285e-078d-4a6d-a7ff-527e3c845c41/resource/dff2ea0d-77de-4356-b870-202cfb1bfb43/download/dados-dos-equipamentos-de-sensoriamento-de-trafego8_2026.json" target="_blank" rel="noopener">Abrir JSON oficial ↗</a></article>
+<article class="tile"><h3>ANTT · Inventário CFTV</h3><span class="tag">JSON</span><span class="tag">Licença CC BY</span><p>Cadastro de câmeras instaladas em rodovias concedidas. É inventário de equipamentos, não endereço de transmissão pública nem autorização para exibir imagens.</p><p><b>Dados atualizados:</b> 28/06/2026</p><a href="https://dados.antt.gov.br/dataset/a67c5bc2-486f-40b9-99d6-197a0ab3376a/resource/f83c9e9a-b3fd-41ca-8b54-9c550e6144d2/download/informacoes-sobre-as-cftvs5_2026.json" target="_blank" rel="noopener">Abrir JSON oficial ↗</a></article>
+</div>
+<div class="actions"><button id="loadAntt" type="button">Carregar cadastros ANTT</button></div>
+<div id="status" class="status" role="status" aria-live="polite">Aguardando consulta ao portal oficial da ANTT.</div>
+<div id="results" class="data-list"></div>
+</section>
+
+<section class="panel">
+<h2>Outras bases oficiais para a camada rodoviária</h2>
+<div class="grid">
+<article class="tile"><h3>DNIT · Condições do pavimento</h3><span class="tag">CSV</span><span class="tag">Base periódica</span><p>Índice de Condição da Manutenção e conservação de rodovias federais. Útil para contexto do trecho; não é detecção instantânea de buracos.</p><a href="https://www.gov.br/dnit/pt-br/acesso-a-informacao/dados-abertos/conjuntos-de-dados" target="_blank" rel="noopener">Portal oficial de dados do DNIT ↗</a></article>
+<article class="tile"><h3>DNIT · Obras e contagem de tráfego</h3><span class="tag">CSV</span><p>Andamento de obras e volumes médios anuais do Plano Nacional de Contagem de Tráfego. A periodicidade e a cobertura variam por conjunto.</p><a href="https://www.gov.br/dnit/pt-br/acesso-a-informacao/dados-abertos/conjuntos-de-dados" target="_blank" rel="noopener">Consultar conjuntos de dados ↗</a></article>
+<article class="tile"><h3>PRF · Acidentes (BAT)</h3><span class="tag">CSV</span><span class="tag">Atualização mensal</span><p>Registros oficiais para estatística e identificação de pontos historicamente críticos. Não representa ocorrência em tempo real.</p><a href="https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf" target="_blank" rel="noopener">Portal de dados abertos PRF ↗</a></article>
+<article class="tile"><h3>ANTT · Sinalização, radares e PMV</h3><span class="tag">CSV / JSON / KMZ</span><p>Cadastros de sinalização de velocidade e proibição de ultrapassagem, radares e painéis de mensagem variável em rodovias concedidas.</p><a href="https://dados.antt.gov.br/dataset?groups=rodovias" target="_blank" rel="noopener">Catálogo rodoviário ANTT ↗</a></article>
+</div>
+</section>
+
+<section class="panel">
+<h2>Campos padronizados de cada informação viária</h2>
+<p>Este é o contrato de dados que o Aurora utilizará para combinar fontes diferentes sem misturar eventos atuais com registros históricos.</p>
+<table><thead><tr><th>Campo</th><th>Finalidade</th></tr></thead><tbody>
+<tr><td><b>id</b> / <b>source_id</b></td><td>Identificador único do registro e identificador na fonte original.</td></tr>
+<tr><td><b>type</b> / <b>category</b></td><td>Acidente, obra, congestionamento, buraco, alagamento, obstáculo, veículo parado, radar, semáforo, faixa de pedestres, câmera ou sensor.</td></tr>
+<tr><td><b>title</b> / <b>description</b></td><td>Resumo claro do evento e detalhes relevantes sem inferências não verificadas.</td></tr>
+<tr><td><b>latitude</b> / <b>longitude</b></td><td>Posição geográfica; manter nulo quando a fonte não fornecer coordenadas confiáveis.</td></tr>
+<tr><td><b>road</b> / <b>km</b> / <b>direction</b></td><td>Rodovia ou via, quilômetro, sentido e trecho, quando disponíveis.</td></tr>
+<tr><td><b>observed_at</b> / <b>published_at</b></td><td>Momento da observação e publicação, em UTC ISO 8601.</td></tr>
+<tr><td><b>valid_until</b> / <b>freshness</b></td><td>Prazo de validade e idade do dado; eventos vencidos deixam de gerar alertas ativos.</td></tr>
+<tr><td><b>status</b> / <b>severity</b></td><td>Ativo, resolvido, expirado ou não confirmado; gravidade apenas quando fornecida ou validada.</td></tr>
+<tr><td><b>source_name</b> / <b>source_url</b></td><td>Órgão responsável, URL original, licença e referência verificável.</td></tr>
+<tr><td><b>access_level</b> / <b>usage_permission</b></td><td>Público, cadastro, convênio ou restrito; permissão de exibição, análise, armazenamento e redistribuição.</td></tr>
+<tr><td><b>confidence</b> / <b>verification</b></td><td>Qualidade da localização, confirmação independente, método de validação e trilha de auditoria.</td></tr>
+</tbody></table>
+</section>
+
+<section class="panel">
+<h2>Tipos de alertas planejados</h2>
+<div class="grid">
+<div class="tile"><h3>Condições da via</h3><p>Buracos, pavimento irregular, lombadas, obras, interdições, pista molhada e alagamentos.</p></div>
+<div class="tile"><h3>Trânsito</h3><p>Congestionamento, lentidão, acidentes, veículos parados, obstáculos e desvios.</p></div>
+<div class="tile"><h3>Sinalização</h3><p>Limite de velocidade, radares, semáforos, placas, faixa de pedestres e áreas escolares.</p></div>
+<div class="tile"><h3>Proteção de usuários</h3><p>Pedestres, ciclistas, animais e alertas de risco de colisão ou ultrapassagem insegura quando houver sensores atuais e confiáveis.</p></div>
+</div>
+</section>
+
+<p class="note"><b>Regra de segurança:</b> cadastros de sensores, radares e CFTV não são prova de trânsito ao vivo. Dados históricos não viram alertas em tempo real. O Aurora não recomendará ultrapassagens com base em estimativas frágeis; qualquer aviso de manobra exigirá informação atual, validação independente e respeito à sinalização e ao CTB.</p>
+<footer>Fontes consultadas: ANTT, DNIT e PRF. A atualização de cada conjunto é definida pelo órgão publicador. O carregamento direto depende de disponibilidade do portal e das políticas CORS do navegador. Nenhum feed de câmera está conectado nesta página.</footer>
+</main>
+<script>
+const sources=[
+ {name:'Sensores de tráfego ANTT',url:'https://dados.antt.gov.br/dataset/1235285e-078d-4a6d-a7ff-527e3c845c41/resource/dff2ea0d-77de-4356-b870-202cfb1bfb43/download/dados-dos-equipamentos-de-sensoriamento-de-trafego8_2026.json',updated:'28/09/2026',description:'Cadastro de equipamentos; não é fluxo ao vivo.'},
+ {name:'CFTV ANTT',url:'https://dados.antt.gov.br/dataset/a67c5bc2-486f-40b9-99d6-197a0ab3376a/resource/f83c9e9a-b3fd-41ca-8b54-9c550e6144d2/download/informacoes-sobre-as-cftvs5_2026.json',updated:'28/06/2026',description:'Inventário de câmeras; não fornece autorização ou stream público por si só.'}
+];
+function rowsFrom(data){if(Array.isArray(data))return data;if(data&&Array.isArray(data.records))return data.records;if(data&&Array.isArray(data.result))return data.result;if(data&&data.result&&Array.isArray(data.result.records))return data.result.records;if(data&&typeof data==='object'){const arr=Object.values(data).find(Array.isArray);if(arr)return arr;}return [data];}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+document.getElementById('loadAntt').addEventListener('click',async()=>{
+ const btn=document.getElementById('loadAntt'),status=document.getElementById('status'),out=document.getElementById('results');btn.disabled=true;out.innerHTML='';status.textContent='Consultando os arquivos JSON oficiais da ANTT…';
+ let success=0;
+ for(const source of sources){
+  const card=document.createElement('article');card.className='record';card.innerHTML='<b>'+esc(source.name)+'</b><br><small>Última atualização informada pela ANTT: '+source.updated+'</small><p>Consultando…</p>';out.appendChild(card);
+  try{
+   const response=await fetch(source.url,{headers:{Accept:'application/json'}});
+   if(!response.ok)throw new Error('HTTP '+response.status);
+   const data=await response.json(),rows=rowsFrom(data);success++;
+   card.innerHTML='<b>'+esc(source.name)+'</b><br><small>Última atualização informada pela ANTT: '+source.updated+' · '+rows.length+' registro(s) no retorno</small><p>'+esc(source.description)+'</p><pre>'+esc(JSON.stringify(rows.slice(0,3),null,2))+'</pre><a href="'+source.url+'" target="_blank" rel="noopener">Abrir arquivo original ↗</a>';
+  }catch(error){card.innerHTML='<b>'+esc(source.name)+'</b><br><small>Última atualização informada pela ANTT: '+source.updated+'</small><p>Não foi possível carregar dentro deste navegador: '+esc(error.message)+'. Isso pode ser bloqueio CORS ou indisponibilidade. O link original continua disponível.</p><a href="'+source.url+'" target="_blank" rel="noopener">Abrir arquivo original ↗</a>';}
+ }
+ status.textContent=success+' de '+sources.length+' arquivos carregados diretamente. Os registros exibidos são cadastros de equipamentos, não leituras ao vivo.';
+ btn.disabled=false;
+});
+</script>
+</body></html>

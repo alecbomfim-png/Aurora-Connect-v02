@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050b08">
+<meta name="description" content="Aurora Vision Network — painel de fontes oficiais e autorizadas de monitoramento viário.">
+<title>Aurora Vision Network · Aurora Connect V02</title>
+<style>
+:root{color-scheme:dark;--green:#55ff28;--lime:#b8ff38;--bg:#050b08;--panel:#0b1710;--line:#28532a;--muted:#b9c9b6;--cyan:#00cfff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#173c13,#050b08 65%);color:#f5fff2;font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:18px max(18px,calc((100% - 1100px)/2));border-bottom:1px solid var(--line);background:#020805ef}
+a{color:var(--lime)}button{border:1px solid var(--green);border-radius:10px;background:#102314;color:#f5fff2;padding:10px 14px;font-weight:800;cursor:pointer}
+.brand{color:var(--green);font-weight:950;letter-spacing:.05em}.wrap{max-width:1100px;margin:auto;padding:22px 18px 50px}
+h1{font-size:clamp(26px,5vw,40px);margin:12px 0 5px}.sub,p{line-height:1.55;color:#d4e3d0}.sub{color:var(--muted);margin-top:0}
+.panel{background:#09130d;border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 8px 28px #0005}
+.banner{border-left:4px solid #e9c52d;padding:12px 14px;background:#241f0c;color:#fff0b4;border-radius:7px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.stat{background:#0d1a11;border:1px solid #29472c;border-radius:12px;padding:13px}.stat b{display:block;color:var(--lime);font-size:23px}.stat small,.muted{color:var(--muted)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.filters button[aria-pressed=true]{background:var(--green);color:#061006}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.source{border:1px solid #29472c;border-radius:13px;padding:15px;background:#0d1a11}.source h3{margin:0 0 8px;color:var(--lime);font-size:17px}.source p{margin:6px 0;font-size:13px}.tag{display:inline-block;border:1px solid #62704a;border-radius:20px;padding:3px 8px;font-size:11px;color:#e7efcb;margin:2px 3px 2px 0}.state{font-weight:800;color:#ffd979}.source a{display:inline-block;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:10px;border-bottom:1px solid #29472c;vertical-align:top}th{color:var(--lime)}
+footer{color:var(--muted);font-size:12px;margin-top:25px}.small{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.wrap{padding:16px 12px 35px}.panel{padding:14px}table{display:block;overflow-x:auto;white-space:normal}}
+</style>
+</head>
+<body>
+<header><div class="brand">🦖 AURORA CONNECT V02</div><div>Vision Network · Fontes viárias</div></header>
+<main class="wrap">
+<a href="./painel-navegacao.html">← Voltar ao painel de navegação</a>
+<h1>📹 Aurora Vision Network</h1>
+<p class="sub">Central de descoberta, validação e futura integração de câmeras e dados oficiais de mobilidade.</p>
+
+<section class="panel">
+<h2>Estado da rede</h2>
+<div class="stats">
+<div class="stat"><b id="total">0</b><small>fontes homologadas</small></div>
+<div class="stat"><b>0</b><small>transmissões ao vivo confirmadas</small></div>
+<div class="stat"><b>0</b><small>APIs integradas</small></div>
+<div class="stat"><b>0</b><small>fontes com autorização formal registrada</small></div>
+</div>
+<p class="small">Os contadores começam em zero: esta versão não possui feeds conectados nem declara câmeras operacionais. Uma página pública ou notícia não comprova que exista um stream reutilizável.</p>
+</section>
+
+<section class="panel">
+<h2>Catálogo de órgãos para validação</h2>
+<p>Use os filtros para organizar a pesquisa. Os órgãos abaixo são pontos de contato e investigação institucional, não fontes de vídeo já aprovadas.</p>
+<div class="filters" aria-label="Filtrar órgãos">
+<button type="button" data-filter="todos" aria-pressed="true">Todos</button>
+<button type="button" data-filter="bahia" aria-pressed="false">Bahia</button>
+<button type="button" data-filter="nacional" aria-pressed="false">Nacionais</button>
+</div>
+<div id="sources" class="grid"></div>
+</section>
+
+<section class="panel">
+<h2>Critérios de homologação</h2>
+<table>
+<thead><tr><th>Verificação</th><th>O que precisa ser comprovado</th></tr></thead>
+<tbody>
+<tr><td>Origem e cobertura</td><td>Órgão responsável, localização das câmeras, trechos cobertos e finalidade do sistema.</td></tr>
+<tr><td>Tipo de conteúdo</td><td>Separar vídeo ao vivo, imagem estática, fotografia periódica, mapa, metadado e página apenas informativa.</td></tr>
+<tr><td>Acesso técnico</td><td>URL oficial funcional, formato (HLS, DASH, MJPEG, API ou portal), autenticação, CORS e limites de requisição.</td></tr>
+<tr><td>Permissão de uso</td><td>Termos de uso e autorização expressa para exibição, armazenamento, análise automatizada e eventual redistribuição.</td></tr>
+<tr><td>Atualidade e integridade</td><td>Timestamp da captura, indicador de câmera offline, latência, origem e monitoramento de falhas.</td></tr>
+<tr><td>Privacidade</td><td>Base legal, minimização, retenção, controle de acesso e avaliação LGPD; evitar identificação de pessoas e placas sem necessidade e fundamento.</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="panel">
+<h2>Fluxo seguro de integração</h2>
+<div class="grid">
+<article class="source"><h3>1 · Descobrir</h3><p>Localizar somente páginas e documentos oficiais e registrar o link original e a data de verificação.</p></article>
+<article class="source"><h3>2 · Verificar</h3><p>Confirmar diretamente no portal se há transmissão real, imagem estática ou somente informação institucional.</p></article>
+<article class="source"><h3>3 · Autorizar</h3><p>Obter termos, licença ou convênio que cubra o uso pretendido antes de conectar ou redistribuir.</p></article>
+<article class="source"><h3>4 · Integrar</h3><p>Adicionar o adaptador técnico, status, timestamp, logs e controles de privacidade; testar falhas e desconexões.</p></article>
+</div>
+</section>
+
+<p class="banner"><b>Segurança:</b> este painel não acessa câmeras privadas, não contorna autenticação e não coleta vídeo automaticamente. Imagens antigas ou páginas institucionais nunca serão apresentadas como transmissão ao vivo. Nenhuma câmera poderá orientar uma ultrapassagem ou manobra sem dados atuais, confiáveis e validação de segurança.</p>
+<footer>Projeto experimental Aurora Connect V02 · Catálogo inicial de investigação. A inclusão de um órgão nesta página não implica parceria, endosso, autorização ou disponibilidade de imagens.</footer>
+</main>
+<script>
+const records=[
+ {name:'Transalvador',region:'Bahia',kind:'Órgão municipal de trânsito',scope:'Salvador e vias sob gestão municipal',url:'https://transalvador.salvador.ba.gov.br/',filter:'bahia'},
+ {name:'DETRAN-BA',region:'Bahia',kind:'Órgão estadual de trânsito',scope:'Bahia; cobertura específica a confirmar em cada sistema',url:'https://www.ba.gov.br/detran/',filter:'bahia'},
+ {name:'SEINFRA-BA',region:'Bahia',kind:'Infraestrutura estadual',scope:'Rodovias e obras estaduais; câmeras e dados a confirmar',url:'http://infraestrutura.ba.gov.br/',filter:'bahia'},
+ {name:'DNIT',region:'Nacional',kind:'Infraestrutura rodoviária federal',scope:'Trechos federais; acesso e compartilhamento dependem da fonte',url:'https://www.gov.br/dnit/pt-br',filter:'nacional'},
+ {name:'Polícia Rodoviária Federal',region:'Nacional',kind:'Fiscalização rodoviária federal',scope:'Rodovias federais; sistemas operacionais podem ser restritos',url:'https://www.gov.br/prf/pt-br',filter:'nacional'}
+];
+const container=document.getElementById('sources');
+document.getElementById('total').textContent='0';
+function render(filter){
+ const items=records.filter(r=>filter==='todos'||r.filter===filter);
+ container.innerHTML=items.map(r=>'<article class="source"><h3>'+r.name+'</h3><span class="tag">'+r.region+'</span><span class="tag">'+r.kind+'</span><p><b>Cobertura:</b> '+r.scope+'</p><p><b>Status:</b> <span class="state">Aguardando verificação da fonte original</span></p><p><b>Tipo de acesso:</b> ainda não classificado; nenhum feed conectado</p><a href="'+r.url+'" target="_blank" rel="noopener noreferrer">Abrir portal oficial ↗</a></article>').join('');
+}
+document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{
+ document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+ render(button.dataset.filter);
+}));
+render('todos');
+</script>
+</body>
+</html>

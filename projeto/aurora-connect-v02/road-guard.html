@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#050b08">
+<meta name="description" content="Aurora Road Guard — alertas preventivos de segurança viária.">
+<title>Aurora Road Guard · Aurora Connect V02</title>
+<style>
+:root{color-scheme:dark;--green:#55ff28;--lime:#b8ff38;--bg:#050b08;--panel:#0b1710;--line:#28532a;--muted:#b9c9b6;--amber:#ffd36a;--red:#ff7777}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#173c13,#050b08 65%);color:#f5fff2;font:15px system-ui,-apple-system,Segoe UI,sans-serif}header{padding:18px max(18px,calc((100% - 1120px)/2));border-bottom:1px solid var(--line);background:#020805ef}a{color:var(--lime)}button{border:1px solid var(--green);border-radius:10px;background:#102314;color:#f5fff2;padding:10px 14px;font-weight:800;cursor:pointer}.wrap{max-width:1120px;margin:auto;padding:22px 18px 50px}.brand{color:var(--green);font-weight:950;letter-spacing:.05em}h1{font-size:clamp(26px,5vw,40px);margin:12px 0 5px}.sub,p{line-height:1.55;color:#d4e3d0}.sub{color:var(--muted);margin-top:0}.panel{background:#09130d;border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 8px 28px #0005}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.tile{background:#0d1a11;border:1px solid #29472c;border-radius:12px;padding:14px}.tile h3{margin:0 0 7px;color:var(--lime);font-size:17px}.tile p{font-size:13px;margin:5px 0}.tag{display:inline-block;border:1px solid #62704a;border-radius:20px;padding:3px 8px;font-size:11px;color:#e7efcb;margin:2px 3px 2px 0}.warning{border-left:4px solid var(--amber);padding:12px 14px;background:#241f0c;color:#fff0b4;border-radius:7px}.danger{border-left-color:var(--red);background:#260e0e;color:#ffe0e0}.status{padding:12px;background:#111f14;border:1px solid #29472c;border-radius:10px;color:#d8ebd3;margin:12px 0}.alert{border:1px solid #6a5424;background:#201b0e;border-radius:12px;padding:14px}.alert h3{margin:0 0 6px;color:var(--amber)}.alert p{margin:5px 0;font-size:13px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}.sample{font-size:12px;color:var(--muted)}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:10px;border-bottom:1px solid #29472c;vertical-align:top}th{color:var(--lime)}footer{font-size:12px;color:var(--muted);margin-top:25px}@media(max-width:600px){.wrap{padding:16px 12px 35px}.panel{padding:14px}table{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+<header><div class="brand">🦖 AURORA CONNECT V02</div><div>Road Guard · Prevenção de riscos viários</div></header>
+<main class="wrap">
+<a href="./painel-navegacao.html">← Voltar ao painel de navegação</a>
+<h1>🛡️ Aurora Road Guard</h1>
+<p class="sub">Avisos antecipados sobre pontos críticos, geometria da via, sinalização e perigos reportados.</p>
+
+<section class="panel">
+<h2>Como o alerta preventivo vai funcionar</h2>
+<div class="grid">
+<article class="tile"><h3>Curvas e pontos críticos</h3><p>Usar histórico georreferenciado de acidentes e características da via para identificar trechos que merecem atenção.</p><span class="tag">Risco histórico</span></article>
+<article class="tile"><h3>Velocidade e radares</h3><p>Informar limite sinalizado e localização cadastrada de radar, sempre conferindo a atualidade e a direção da pista.</p><span class="tag">Sinalização oficial</span></article>
+<article class="tile"><h3>Lombadas e travessias</h3><p>Avisar sobre redutores, faixas de pedestres, escolas e cruzamentos com antecedência compatível com a via.</p><span class="tag">Infraestrutura</span></article>
+<article class="tile"><h3>Buracos e obstáculos</h3><p>Combinar registros oficiais, relatos recentes e confirmações independentes; alertas expiram ou são revisados.</p><span class="tag">Condição variável</span></article>
+</div>
+</section>
+
+<section class="panel">
+<h2>Exemplos de avisos por voz</h2>
+<div class="grid">
+<article class="alert"><h3>⚠ Curva com histórico de acidentes</h3><p>“Atenção. Curva acentuada à frente, trecho com histórico de acidentes. Reduza a velocidade e mantenha sua faixa.”</p><small>Disparar somente quando histórico e localização da curva estiverem validados.</small></article>
+<article class="alert"><h3>⚠ Buraco reportado</h3><p>“Atenção. Buraco reportado à frente, na faixa direita. Reduza com segurança e evite manobra brusca.”</p><small>Exibir data do relato e nível de confirmação; retirar quando vencido ou resolvido.</small></article>
+<article class="alert"><h3>⚠ Radar e limite</h3><p>“Atenção. Fiscalização eletrônica à frente. Observe a velocidade máxima sinalizada.”</p><small>Não inferir limite nem alertar radar sem cadastro e sentido de circulação confiáveis.</small></article>
+<article class="alert"><h3>⚠ Lombada / travessia</h3><p>“Redutor de velocidade à frente. Diminua a velocidade. Atenção a pedestres.”</p><small>Usar localização, sentido e sinalização confirmados.</small></article>
+</div>
+</section>
+
+<section class="panel">
+<h2>Base histórica oficial — acidentes PRF</h2>
+<p>A PRF publica dados abertos de acidentes em CSV, com atualização mensal da base BAT. Esses dados podem ajudar a localizar trechos com repetição de acidentes e causas como curva acentuada, pista escorregadia, buracos, animais ou visibilidade reduzida.</p>
+<div class="actions"><a class="button" href="https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf" target="_blank" rel="noopener">Abrir dados oficiais PRF ↗</a><a class="button" href="https://dados.antt.gov.br/dataset?groups=rodovias" target="_blank" rel="noopener">Abrir dados rodoviários ANTT ↗</a></div>
+<p class="sample">A base histórica não identifica, sozinha, um perigo que esteja acontecendo agora. O Aurora deve comparar datas, coordenadas, rodovia e sentido; mostrar o período analisado e evitar classificar um local como perigoso com poucos registros ou localização imprecisa.</p>
+</section>
+
+<section class="panel">
+<h2>Regras de qualidade do alerta</h2>
+<table><thead><tr><th>Classe</th><th>Exemplo</th><th>Como o Aurora apresenta</th></tr></thead><tbody>
+<tr><td>Histórico</td><td>Curva com acidentes recorrentes em anos anteriores</td><td>“Trecho com histórico de acidentes” e período/fonte; nunca dizer que há acidente agora.</td></tr>
+<tr><td>Infraestrutura oficial</td><td>Radar, limite de velocidade, lombada ou faixa cadastrada</td><td>Informar localização, sentido e data da última verificação.</td></tr>
+<tr><td>Condição recente</td><td>Buraco, alagamento, árvore caída ou veículo parado</td><td>Mostrar hora do relato, confirmação e validade; avisar que pode ter mudado.</td></tr>
+<tr><td>Tempo real</td><td>Acidente, congestionamento ou obstáculo confirmado por fonte operacional</td><td>Alerta ativo somente com fonte atual, timestamp e monitoramento de atualização.</td></tr>
+</tbody></table>
+</section>
+
+<section class="panel">
+<h2>Modelo de registro para cada perigo</h2>
+<p>Todos os avisos seguirão um formato comum para permitir cruzamento de dados e auditoria.</p>
+<table><thead><tr><th>Campo</th><th>Descrição</th></tr></thead><tbody>
+<tr><td>hazard_id / type</td><td>Identificador e categoria: curva, acidente histórico, buraco, lombada, radar, faixa, alagamento, obra ou obstáculo.</td></tr>
+<tr><td>coordinates / road / km</td><td>Latitude, longitude, rodovia/via, quilômetro e sentido/faixa quando conhecidos.</td></tr>
+<tr><td>risk_level / basis</td><td>Nível de atenção e fundamento: histórico, cadastro oficial, relato recente ou fonte operacional.</td></tr>
+<tr><td>observed_at / valid_until</td><td>Data da observação e validade; itens vencidos deixam de gerar alertas ativos.</td></tr>
+<tr><td>source / verification</td><td>Órgão ou colaborador, link original, número de confirmações e método de validação.</td></tr>
+<tr><td>voice_message / lead_distance</td><td>Texto curto para voz e distância de antecedência calculada conforme velocidade, geometria e confiança da posição.</td></tr>
+</tbody></table>
+</section>
+
+<p class="warning danger"><b>Regra essencial:</b> o Aurora não deve mandar o motorista frear bruscamente, desviar para outra faixa ou fazer ultrapassagem por causa de um alerta. A orientação é reduzir gradualmente quando seguro, respeitar a sinalização, manter distância e nunca realizar manobra arriscada. Alertas de curva não substituem placas nem avaliação das condições reais da via.</p>
+<div class="status">Estado desta etapa: estrutura preventiva e exemplos de alertas documentados. Ainda não há ingestão automática da base PRF nem alertas operacionais em tempo real nesta página.</div>
+<footer>Fontes: PRF Dados Abertos; ANTT Dados Abertos Rodovias. Histórico estatístico, cadastro de infraestrutura e eventos atuais são categorias separadas. Projeto experimental; não substitui sinalização, fiscalização ou condução responsável.</footer>
+</main>
+</body></html>

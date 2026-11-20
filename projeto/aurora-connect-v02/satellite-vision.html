@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050b08">
+<title>Aurora Satellite Vision · Aurora Connect V02</title>
+<style>
+:root{color-scheme:dark;--green:#55ff28;--lime:#b8ff38;--bg:#050b08;--panel:#0b1710;--line:#28532a;--muted:#b9c9b6}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#173c13,#050b08 65%);color:#f5fff2;font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:20px max(18px,calc((100% - 1050px)/2));border-bottom:1px solid var(--line);background:#020805eF}
+a{color:var(--lime)}.brand{color:var(--green);font-weight:900;letter-spacing:.04em}.wrap{max-width:1050px;margin:auto;padding:22px 18px 48px}
+h1{font-size:clamp(25px,5vw,38px);margin:10px 0}p{line-height:1.55;color:#d4e3d0}.sub{color:var(--muted);margin-top:0}
+.panel{background:#09130d;border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 8px 28px #0005}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+button,.button{border:1px solid var(--green);border-radius:10px;background:#102314;color:#f5fff2;padding:11px 15px;font-weight:800;text-decoration:none;cursor:pointer}
+button.primary{background:var(--green);color:#061006}
+.status{padding:12px;border-radius:10px;background:#111f14;color:#d8ebd3;min-height:44px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.item{border:1px solid #29472c;border-radius:12px;padding:14px;background:#0d1a11}.item b{color:var(--lime)}.item small{display:block;color:var(--muted);margin-top:7px;line-height:1.45}
+.warning{border-left:4px solid #e9c52d;padding:10px 14px;background:#241f0c;color:#fff0b4;border-radius:6px}
+footer{color:var(--muted);font-size:12px;margin-top:25px}
+code{color:#b8ffb1;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header><div class="brand">🦖 AURORA CONNECT V02</div><div>Satellite Vision · Observação da Terra</div></header>
+<main class="wrap">
+<a href="./painel-navegacao.html">← Voltar ao painel de navegação</a>
+<h1>🛰 Aurora Satellite Vision</h1>
+<p class="sub">Consulta ao catálogo público Copernicus Sentinel para a região Pojuca – Camaçari – Salvador, Bahia.</p>
+<section class="panel">
+<h2>Imagens de satélite disponíveis</h2>
+<p>Esta página consulta o catálogo STAC oficial do Copernicus Data Space e procura cenas Sentinel‑2 L2A com cobertura de nuvens abaixo de 30% na área regional. A consulta lista datas e metadados; não representa imagens ao vivo nem monitoramento de veículos.</p>
+<div class="actions">
+<button class="primary" id="search">Consultar imagens disponíveis</button>
+<a class="button" href="https://browser.dataspace.copernicus.eu/" target="_blank" rel="noopener">Abrir Copernicus Browser</a>
+</div>
+<div id="status" class="status" role="status" aria-live="polite">Pronto para consultar o catálogo público.</div>
+</section>
+<section class="panel">
+<h2>Resultados do catálogo</h2>
+<div id="results" class="grid"><p>Os resultados da consulta aparecerão aqui.</p></div>
+</section>
+<section class="panel">
+<h2>Como o Aurora utiliza esses dados</h2>
+<div class="grid">
+<div class="item"><b>Sentinel‑2 L2A</b><small>Observação multiespectral da superfície, útil para contexto territorial, expansão urbana, vegetação e mudanças na paisagem.</small></div>
+<div class="item"><b>Data da captura</b><small>Cada cena será apresentada com sua data e metadados para não confundir imagem histórica com condição atual da estrada.</small></div>
+<div class="item"><b>Segurança viária</b><small>Radares, veículos, pedestres, acidentes e obstáculos exigem fontes próprias e atuais, como órgãos oficiais, sensores ou câmeras autorizadas.</small></div>
+</div>
+</section>
+<p class="warning"><b>Limite de segurança:</b> imagens de satélite não identificam carros ou obstáculos em tempo real e não devem ser usadas isoladamente para decidir ultrapassagens, velocidade ou manobras. Respeite sempre a sinalização física e as condições reais da via.</p>
+<footer>Fonte de catálogo: Copernicus Data Space Ecosystem · API STAC v1 · Coleção sentinel-2-l2a. A disponibilidade, a cobertura de nuvens e o tempo entre captura e publicação variam conforme a cena.</footer>
+</main>
+<script>
+const endpoint='https://stac.dataspace.copernicus.eu/v1/search';
+const bbox=[-39.2,-13.5,-37.7,-12.3];
+const statusEl=document.getElementById('status');
+const resultsEl=document.getElementById('results');
+function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function dateAgo(days){const d=new Date();d.setUTCDate(d.getUTCDate()-days);return d.toISOString().slice(0,10);}
+document.getElementById('search').addEventListener('click',async()=>{
+ const button=document.getElementById('search');button.disabled=true;statusEl.textContent='Consultando o catálogo Copernicus…';resultsEl.innerHTML='';
+ const body={collections:['sentinel-2-l2a'],bbox,datetime:dateAgo(365)+'T00:00:00Z/'+new Date().toISOString(),limit:12,query:{'eo:cloud_cover':{lt:30}},sortby:[{field:'properties.datetime',direction:'desc'}]};
+ try{
+  const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/geo+json'},body:JSON.stringify(body)});
+  if(!response.ok)throw new Error('O catálogo respondeu com HTTP '+response.status);
+  const data=await response.json();const items=data.features||[];
+  if(!items.length){statusEl.textContent='A consulta foi concluída, mas não retornou cenas com esses filtros. Tente novamente mais tarde ou abra o Copernicus Browser.';return;}
+  statusEl.textContent=items.length+' cena(s) encontrada(s). Confira a data de captura e a cobertura de nuvens.';
+  resultsEl.innerHTML=items.map(item=>{
+   const props=item.properties||{};const date=props.datetime?new Date(props.datetime).toLocaleString('pt-BR',{dateStyle:'medium',timeStyle:'short',timeZone:'UTC'})+' UTC':'Data não informada';
+   const cloud=props['eo:cloud_cover']!=null?Number(props['eo:cloud_cover']).toFixed(1)+'%':'Não informada';
+   const assets=item.assets||{};const asset=assets.thumbnail||assets.preview||assets.visual;const href=asset&&asset.href;
+   return '<article class="item"><b>Sentinel‑2 · '+esc(item.id||'Cena sem identificador')+'</b><small>Captura: '+esc(date)+'</small><small>Nuvens: '+esc(cloud)+'</small><small>Produto: '+esc(item.collection||'sentinel-2-l2a')+'</small>'+(href?'<small><a href="'+esc(href)+'" target="_blank" rel="noopener">Abrir recurso da cena</a></small>':'')+'</article>';
+  }).join('');
+ }catch(error){
+  statusEl.textContent='Não foi possível consultar diretamente o catálogo neste navegador ('+error.message+'). A consulta pode estar bloqueada pela conexão ou por política de acesso do navegador. Use o Copernicus Browser para pesquisar a mesma região.';
+  resultsEl.innerHTML='<p>Abra o <a href="https://browser.dataspace.copernicus.eu/" target="_blank" rel="noopener">Copernicus Browser</a> e procure a região da Bahia.</p>';
+ }finally{button.disabled=false;}
+});
+</script>
+</body>
+</html>

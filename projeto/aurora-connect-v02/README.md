@@ -6,6 +6,16 @@ Aplicativo web responsivo para consulta e planejamento de mobilidade na Bahia.
 
 Abra `index.html` em um navegador moderno com acesso à internet. O mapa e as funções de busca/rota usam Leaflet, OpenStreetMap, Nominatim e OSRM; não há dependências de build.
 
+## Instalar como aplicativo (PWA)
+
+A aplicação está sendo preparada como Progressive Web App (PWA), com manifesto, ícone e service worker para guardar a estrutura básica e os arquivos locais em cache. A instalação só fica disponível quando o site estiver publicado em HTTPS (ou em ambiente local de desenvolvimento).
+
+- **iPhone/iPad:** abrir o endereço publicado no Safari, tocar em Compartilhar e escolher “Adicionar à Tela de Início”.
+- **Android:** abrir no navegador compatível e usar “Instalar aplicativo” ou “Adicionar à tela inicial”.
+- **Computador:** usar a opção “Instalar” apresentada por navegadores compatíveis.
+
+O mapa, a busca de endereços e o cálculo de rotas dependem de serviços externos e de conexão com a internet. O cache do aplicativo não significa que mapas e rotas funcionem integralmente offline. A publicação ainda depende da configuração de hospedagem HTTPS e de testes reais nos dispositivos.
+
 ## O que já funciona
 
 - Mapa interativo centralizado em Salvador.

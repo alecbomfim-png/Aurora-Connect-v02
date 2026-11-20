@@ -31,3 +31,10 @@ As linhas e ocorrências no mapa são **exemplos visuais**, não representam tr�
 - A consulta filtra cenas com cobertura de nuvens inferior a 30% e apresenta a data de captura; a disponibilidade depende do catálogo e da conexão do navegador.
 - As cenas são observações da Terra, não imagens ao vivo da estrada. Não detectam veículos, radares, pedestres ou obstáculos em tempo real e não substituem dados de trânsito oficiais.
 - O módulo é experimental e fica acessível pelo botão “Satélite” no painel de navegação.
+
+## Aurora Explore — atrativos e rotas
+
+- `explore.html` pesquisa atrações turísticas, pontos históricos, parques e locais naturais próximos à posição GPS autorizada pelo usuário.
+- Usa dados do OpenStreetMap consultados pela Overpass API; busca em raio de 30 km, ordena por distância e permite calcular uma rota de carro até o local selecionado pelo OSRM público.
+- Se o usuário já concedeu permissão de geolocalização, a página tenta atualizar a busca ao abrir quando há conexão; caso contrário, solicita a localização após ação do usuário. Ao voltar a conexão, atualiza os resultados.
+- A localização não é rastreada continuamente. Resultados podem estar incompletos/desatualizados e o roteamento depende de serviço externo; não é navegação certificada nem instrução de segurança.

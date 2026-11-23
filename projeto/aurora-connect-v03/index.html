@@ -12,7 +12,7 @@
 .scene3d .road3d{position:absolute;left:50%;bottom:-3%;width:min(78%,1000px);height:79%;transform:translateX(-50%);background:linear-gradient(90deg,#303638,#55595a 48%,#34393a);clip-path:polygon(43% 0,57% 0,100% 100%,0 100%);box-shadow:0 0 40px #0008}
 .scene3d .road3d:before,.scene3d .road3d:after{content:"";position:absolute;top:0;height:100%;width:5px;background:#d8d8c8;opacity:.9}
 .scene3d .road3d:before{left:43%}.scene3d .road3d:after{right:43%}
-.scene3d .centerline3d{position:absolute;left:50%;bottom:0;width:5px;height:100%;transform:translateX(-50%);background:repeating-linear-gradient(to bottom,#f5f0c9 0 28px,transparent 28px 55px);clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);animation:auroraRoadFlow 1.3s linear infinite}
+.scene3d .centerline3d{position:absolute;left:50%;bottom:0;width:5px;height:100%;transform:translateX(-50%);background:repeating-linear-gradient(to bottom,#f5f0c9 0 28px,transparent 28px 55px);background-position-y:0;clip-path:polygon(45% 0,55% 0,100% 100%,0 100%)}.scene3d[data-driving="true"] .centerline3d{animation:auroraRoadFlow var(--road-flow-duration,1.3s) linear infinite}.scene3d[data-driving="false"] .centerline3d{animation:none}
 @keyframes auroraRoadFlow{to{background-position:0 55px}}
 .scene3d .car3d{position:absolute;z-index:4;bottom:7%;left:50%;transform:translateX(-50%);width:116px;height:82px;filter:drop-shadow(0 12px 7px #0008)}
 .scene3d .car3d svg{width:100%;height:100%}
@@ -86,6 +86,13 @@ function prepareFollowRoute(route,coords){
   followRouteDistance=followCumulative[followCumulative.length-1]||route.distance||0;
   followRouteDuration=route.duration||0;
   followProgress=0;followNearestIndex=0;offRouteWarned=false;followStepPositions=[];
+  window.__auroraLastAnnouncedStep=-1;
+  const scene=document.querySelector('.scene3d');
+  if(scene){scene.dataset.driving='false';scene.style.removeProperty('--road-flow-duration');}
+  const traffic=document.getElementById('traffic3d');
+  if(traffic)traffic.style.transform='translate3d(0,0,0) scale(1)';
+  const stripe=document.querySelector('.centerline3d');
+  if(stripe)stripe.style.backgroundPositionY='0px';
   routeSteps.forEach(s=>{
     const loc=s.maneuver?.location;
     if(!loc){followStepPositions.push(0);return}
@@ -145,10 +152,18 @@ function updateFollow(point,simulated=false){
     return;
   }
   offRouteWarned=false;followNearestIndex=Math.max(followNearestIndex,near.index);followProgress=Math.max(followProgress,near.progress);
-  const sceneDetail=document.getElementById('sceneRouteDetail');
-  if(sceneDetail)sceneDetail.textContent=(simulated?'DEMONSTRAÇÃO SIMULADA':'ACOMPANHAMENTO GPS')+' · '+(Math.max(0,followRouteDistance-followProgress)/1000).toFixed(1).replace('.',',')+' km restantes';
-  const traffic=document.getElementById('traffic3d');
-  if(traffic){const phase=Math.min(1,followProgress/Math.max(1,followRouteDistance));traffic.style.transform='translateY('+Math.round(phase*42)+'px) scale('+(1+phase*.22)+')';}
+  const scene=document.querySelector('.scene3d');
+  if(scene){
+    scene.dataset.driving='true';
+    const progressRatio=Math.min(1,followProgress/Math.max(1,followRouteDistance));
+    scene.style.setProperty('--road-flow-duration',simulated?'0.72s':'1.15s');
+    const stripe=document.querySelector('.centerline3d');
+    if(stripe)stripe.style.backgroundPositionY=(followProgress*.22%55)+'px';
+    const sceneDetail=document.getElementById('sceneRouteDetail');
+    if(sceneDetail)sceneDetail.textContent=(simulated?'DEMONSTRAÇÃO SIMULADA':'ACOMPANHAMENTO GPS')+' · '+(Math.max(0,followRouteDistance-followProgress)/1000).toFixed(1).replace('.',',')+' km restantes';
+    const traffic=document.getElementById('traffic3d');
+    if(traffic)traffic.style.transform='translate3d(0,'+Math.round(progressRatio*125)+'px,0) scale('+(1+progressRatio*.42)+')';
+  }
   const markerPoint=simulated?point:point;
   if(!followMarker)followMarker=L.circleMarker(markerPoint,{radius:9,color:'#101711',weight:3,fillColor:'#c8f169',fillOpacity:1}).addTo(map).bindPopup(simulated?'Veículo · simulação':'Sua posição GPS');
   else followMarker.setLatLng(markerPoint);
@@ -164,9 +179,9 @@ function updateFollow(point,simulated=false){
     document.getElementById('driveManeuver').textContent=labelStep(step);
     document.getElementById('driveDistance').textContent=(toManeuver>=1000?(toManeuver/1000).toFixed(1).replace('.',',')+' km':Math.round(toManeuver)+' m');
     document.getElementById('driveDuration').textContent=Math.max(1,Math.round(remainingSeconds/60))+' min restantes';
-    if(toManeuver<=500&&stepIndex!==window.__auroraLastAnnouncedStep){
+    if(toManeuver<=650&&toManeuver>=0&&stepIndex!==window.__auroraLastAnnouncedStep){
       window.__auroraLastAnnouncedStep=stepIndex;
-      announceFollow(labelStep(step)+' em '+(toManeuver<1000?Math.round(toManeuver)+' metros':(toManeuver/1000).toFixed(1).replace('.',',')+' quilômetros')+'.');
+      announceFollow(labelStep(step)+' em '+Math.max(0,Math.round(toManeuver))+' metros.');
     }
   }
   document.getElementById('followStatus').textContent=(simulated?'Demonstração simulada':'GPS acompanhando')+' · '+(remaining/1000).toFixed(1).replace('.',',')+' km restantes.';
@@ -177,6 +192,7 @@ function updateFollow(point,simulated=false){
     document.getElementById('driveDistance').textContent='0 m';
     document.getElementById('driveDuration').textContent='Concluído';
     announceFollow('Você chegou ao destino.');stopFollow(false);
+    const scene=document.querySelector('.scene3d');if(scene)scene.dataset.driving='false';
     document.getElementById('followStatus').textContent='Percurso concluído.';
   }
 }

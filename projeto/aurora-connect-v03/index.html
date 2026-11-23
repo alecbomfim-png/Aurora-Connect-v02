@@ -119,8 +119,21 @@ function pointAtProgress(meters){
   const before=followCumulative[i-1],span=followCumulative[i]-before,t=span?Math.max(0,Math.min(1,(meters-before)/span)):0;
   return L.latLng(followPoints[i-1].lat+(followPoints[i].lat-followPoints[i-1].lat)*t,followPoints[i-1].lng+(followPoints[i].lng-followPoints[i-1].lng)*t);
 }
+/* Libera a síntese de voz durante o toque do usuário; iOS/Safari pode bloquear fala iniciada só por callbacks de GPS/timers. */
+let followVoiceUnlocked=false;
+function armFollowVoice(){
+  if(!('speechSynthesis'in window)||typeof SpeechSynthesisUtterance==='undefined'){
+    notify('Este navegador não oferece orientação por voz.');
+    return;
+  }
+  followVoiceUnlocked=true;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance('Orientação por voz ativada.');
+  u.lang='pt-BR';u.volume=.35;
+  speechSynthesis.speak(u);
+}
 function announceFollow(text){
-  if(!followAutoVoice||!('speechSynthesis'in window))return;
+  if(!followAutoVoice||!followVoiceUnlocked||!('speechSynthesis'in window))return;
   speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';speechSynthesis.speak(u);
 }
 function updateFollow(point,simulated=false){
@@ -170,6 +183,7 @@ function updateFollow(point,simulated=false){
 document.getElementById('startTracking').onclick=()=>{
   if(!followPoints.length){notify('Calcule uma rota antes de iniciar.');return}
   if(!navigator.geolocation){notify('Este navegador não oferece GPS.');return}
+  armFollowVoice();
   stopFollow(false);window.__auroraLastAnnouncedStep=-1;
   document.getElementById('pauseTracking').disabled=false;
   document.getElementById('followStatus').textContent='Solicitando posição GPS…';
@@ -186,6 +200,7 @@ document.getElementById('startTracking').onclick=()=>{
 };
 document.getElementById('simulateDrive').onclick=()=>{
   if(!followPoints.length){notify('Calcule uma rota antes de iniciar a simulação.');return}
+  armFollowVoice();
   stopFollow(false);window.__auroraLastAnnouncedStep=-1;followProgress=0;followNearestIndex=0;
   document.getElementById('pauseTracking').disabled=false;
   document.getElementById('followStatus').textContent='Demonstração simulada · não representa deslocamento real.';

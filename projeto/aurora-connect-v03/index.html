@@ -54,15 +54,15 @@ async function findServices(kind){const center=currentPosition||lastRoute?.origi
 document.querySelectorAll('.chip').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));btn.setAttribute('aria-pressed','true');findServices(btn.dataset.kind)});
 
 /* Acompanhamento contínuo do trajeto: GPS real ou demonstração simulada. */
-let followPoints=[],followCumulative=[],followStepPositions=[],followProgress=0,followWatch=null,followTimer=null,followMarker=null,followRouteDistance=0,followRouteDuration=0,followAutoVoice=true,offRouteWarned=false;
+let followPoints=[],followCumulative=[],followStepPositions=[],followProgress=0,followNearestIndex=0,followWatch=null,followTimer=null,followMarker=null,followRouteDistance=0,followRouteDuration=0,followAutoVoice=true,offRouteWarned=false;
 function prepareFollowRoute(route,coords){
   stopFollow(false);
   followPoints=coords.map(p=>L.latLng(p[0],p[1]));
   followCumulative=[0];
   for(let i=1;i<followPoints.length;i++)followCumulative[i]=followCumulative[i-1]+map.distance(followPoints[i-1],followPoints[i]);
-  followRouteDistance=route.distance||followCumulative[followCumulative.length-1]||0;
+  followRouteDistance=followCumulative[followCumulative.length-1]||route.distance||0;
   followRouteDuration=route.duration||0;
-  followProgress=0;offRouteWarned=false;followStepPositions=[];
+  followProgress=0;followNearestIndex=0;offRouteWarned=false;followStepPositions=[];
   routeSteps.forEach(s=>{
     const loc=s.maneuver?.location;
     if(!loc){followStepPositions.push(0);return}
@@ -82,8 +82,11 @@ function stopFollow(showStatus=true){
   if(showStatus)document.getElementById('followStatus').textContent='Acompanhamento pausado.';
 }
 function nearestFollowPoint(point){
-  let best=Infinity,index=0;
-  for(let i=0;i<followPoints.length;i++){const d=map.distance(point,followPoints[i]);if(d<best){best=d;index=i}}
+  let best=Infinity,index=followNearestIndex;
+  const start=Math.max(0,followNearestIndex-5),end=Math.min(followPoints.length,followNearestIndex+180);
+  for(let i=start;i<end;i++){const d=map.distance(point,followPoints[i]);if(d<best){best=d;index=i}}
+  /* Se o sinal saltar muito à frente, permite reencontrar a rota sem voltar o progresso. */
+  if(best>100){for(let i=0;i<followPoints.length;i++){const d=map.distance(point,followPoints[i]);if(d<best){best=d;index=i}}}
   return{index,distance:best,progress:followCumulative[index]||0};
 }
 function pointAtProgress(meters){
@@ -105,7 +108,7 @@ function updateFollow(point,simulated=false){
     document.getElementById('followStatus').textContent='Fora do traçado previsto · aguardando retorno à rota.';
     return;
   }
-  offRouteWarned=false;followProgress=Math.max(followProgress,near.progress);
+  offRouteWarned=false;followNearestIndex=Math.max(followNearestIndex,near.index);followProgress=Math.max(followProgress,near.progress);
   const markerPoint=simulated?point:point;
   if(!followMarker)followMarker=L.circleMarker(markerPoint,{radius:9,color:'#101711',weight:3,fillColor:'#c8f169',fillOpacity:1}).addTo(map).bindPopup(simulated?'Veículo · simulação':'Sua posição GPS');
   else followMarker.setLatLng(markerPoint);
@@ -156,12 +159,12 @@ document.getElementById('startTracking').onclick=()=>{
 };
 document.getElementById('simulateDrive').onclick=()=>{
   if(!followPoints.length){notify('Calcule uma rota antes de iniciar a simulação.');return}
-  stopFollow(false);window.__auroraLastAnnouncedStep=-1;followProgress=0;
+  stopFollow(false);window.__auroraLastAnnouncedStep=-1;followProgress=0;followNearestIndex=0;
   document.getElementById('pauseTracking').disabled=false;
   document.getElementById('followStatus').textContent='Demonstração simulada · não representa deslocamento real.';
   updateFollow(followPoints[0],true);
   followTimer=setInterval(()=>{
-    followProgress=Math.min(followRouteDistance,followProgress+Math.max(18,followRouteDistance/100));
+    followProgress=Math.min(followRouteDistance,followProgress+Math.max(18,followRouteDistance/285));
     const p=pointAtProgress(followProgress);if(p)updateFollow(p,true);
     if(followProgress>=followRouteDistance){stopFollow(false);document.getElementById('followStatus').textContent='Demonstração concluída · nenhum GPS ou movimento real foi utilizado.'}
   },900);

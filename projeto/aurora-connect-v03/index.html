@@ -155,7 +155,37 @@
 .route-summary span{display:block;padding:7px 9px;background:#101913;border:1px solid #52634c;border-radius:8px}
 .route-summary small{display:block;color:#b9c5b5;font-size:10px}
 .route-summary b{display:block;color:#d9f49b;font-size:15px}
-.scene-routebar select{flex:0 1 125px;min-width:105px;background:#f7faf5;color:#17231b;border:1px solid #9eae9a;border-radius:7px;padding:10px 8px;font:inherit;font-size:12px}@media(max-width:760px){.scene-routebar select{flex:1 1 100px;padding:9px;font-size:11px}}.scene-routebar #sceneUseGps{background:#e0f5b4;color:#183018;border:1px solid #94b66d;border-radius:8px;padding:10px 11px;font-size:12px;font-weight:900;white-space:nowrap}.scene-routebar input::placeholder{color:#657367}@media(max-width:760px){.scene-routebar #sceneUseGps{padding:9px 8px;font-size:11px}}.driver-route-marker{pointer-events:none;filter:drop-shadow(0 3px 6px #000b)}.scene3d.route-preview .driver-route-marker{opacity:1}.scene3d.route-preview .car3d{transform:none!important}</style></head><body>
+.scene-routebar select{flex:0 1 125px;min-width:105px;background:#f7faf5;color:#17231b;border:1px solid #9eae9a;border-radius:7px;padding:10px 8px;font:inherit;font-size:12px}@media(max-width:760px){.scene-routebar select{flex:1 1 100px;padding:9px;font-size:11px}}.scene-routebar #sceneUseGps{background:#e0f5b4;color:#183018;border:1px solid #94b66d;border-radius:8px;padding:10px 11px;font-size:12px;font-weight:900;white-space:nowrap}.scene-routebar input::placeholder{color:#657367}@media(max-width:760px){.scene-routebar #sceneUseGps{padding:9px 8px;font-size:11px}}.driver-route-marker{pointer-events:none;filter:drop-shadow(0 3px 6px #000b)}.scene3d.route-preview .driver-route-marker{opacity:1}.scene3d.route-preview .car3d{transform:none!important}
+/* V03 — experiência exclusivamente 3D, conforme referência aprovada */
+.layout{display:block!important;min-height:calc(100vh - 62px)}
+.layout>aside{display:none!important}
+.mapbox{display:block!important;position:relative;height:calc(100vh - 62px)!important;min-height:650px!important;overflow:hidden}
+#map{display:none!important;visibility:hidden!important;pointer-events:none!important}
+.scene3d{inset:0!important;left:0!important;right:0!important;top:0!important;bottom:0!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;border:0!important;border-radius:0!important;z-index:2!important;box-shadow:none!important}
+.maptools{z-index:540!important;left:14px!important;right:14px!important;top:14px!important;display:flex!important;align-items:center;flex-wrap:wrap;max-width:calc(100% - 28px)}
+.scene-routebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;width:100%;padding:10px;background:#07100de8;border:1px solid #65f58a;border-radius:15px;box-shadow:0 0 18px #00f05a55}
+.scene-routebar input{flex:1 1 190px;min-width:130px;height:42px;padding:0 12px;border-radius:9px;border:1px solid #536b58;background:#f5f8f3;color:#17231b;font:600 13px system-ui}
+.scene-routebar button,.scene-routebar select{min-height:40px}
+#mapSearch,#locate,#routeOverview,#satellite,#toggleMiniMap,.maptools>a{display:none!important}
+.scene-hud{top:auto!important;left:14px!important;bottom:170px!important;max-width:min(360px,calc(100% - 28px))!important;z-index:560!important;border-color:#55ef7a!important;box-shadow:0 0 16px #00ef5b35}
+.planning-status{top:auto!important;left:14px!important;bottom:112px!important;z-index:560!important}
+.drive{z-index:565!important;left:14px!important;bottom:14px!important;width:min(370px,calc(100% - 28px))!important;max-width:420px!important}
+.mapnote,.traffic-source-hud{display:none!important}
+.scene3d.route-preview .car3d{transform:none!important;animation:none!important}
+.scene3d.route-preview .traffic3d,.scene3d.route-preview .traffic-return3d{animation-play-state:running!important}
+@media(max-width:760px){
+ .mapbox{height:calc(100dvh - 62px)!important;min-height:620px!important}
+ .maptools{left:8px!important;right:8px!important;top:8px!important;max-width:calc(100% - 16px)}
+ .scene-routebar{gap:6px;padding:8px}
+ .scene-routebar input{flex:1 1 42%;min-width:0;height:39px;font-size:12px}
+ .scene-routebar select{flex:1 1 95px;min-width:95px}
+ .scene-routebar #sceneUseGps{flex:0 0 auto}
+ .scene-routebar #sceneRouteGo{flex:1 1 100%;width:100%}
+ .scene-hud{left:8px!important;bottom:170px!important;max-width:calc(100% - 16px)!important}
+ .planning-status{left:8px!important;bottom:112px!important}
+ .drive{left:8px!important;bottom:8px!important;width:calc(100% - 16px)!important}
+}
+</style></head><body>
 <header class="top"><div class="brand"><div class="logo">↗</div><div>AURORA <span>CONNECT</span> V03</div></div><div class="status">● Mapa disponível</div></header>
 <main class="layout"><aside><div class="eyebrow">NAVEGAÇÃO INTELIGENTE · BAHIA</div><div class="h">Vamos pelo melhor caminho.</div><p class="muted">Planeje seu trajeto, encontre apoio próximo e ouça instruções de direção.</p>
 <section class="card"><h2>Laboratório de segurança 3D</h2><p class="muted">Teste cenários de curva perigosa, chuva, animais, lombadas, acidentes e bloqueios em uma estrada simulada. Use somente com o veículo parado.</p><a class="primary" href="/aurora-seguranca-simulador.html" style="display:grid;place-items:center;text-decoration:none;font-size:12px">Abrir simulador 3D →</a></section>

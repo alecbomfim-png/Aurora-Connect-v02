@@ -528,4 +528,24 @@ document.getElementById('pauseTracking').onclick=()=>stopFollow(true);
   .mapbox .mapnote{right:auto;left:7px;bottom:105px;max-width:35%;font-size:8px;padding:5px}
   .mapbox .traffic-source-hud{left:40%;right:6px;bottom:7px;max-width:59%}
 }
+
+/* O mapa 2D permanece visível ao lado da cena 3D, inclusive no modo de condução */
+.mapbox.aurora-driving #map,
+.mapbox.aurora-driving.show-mini-map #map{
+  display:block!important;
+  inset:0 auto 0 0!important;
+  width:42%!important;
+  height:100%!important;
+  right:auto!important;
+  bottom:auto!important;
+}
+@media(max-width:760px){
+  .mapbox.aurora-driving #map,
+  .mapbox.aurora-driving.show-mini-map #map{
+    width:39%!important;
+    height:100%!important;
+    right:auto!important;
+    bottom:auto!important;
+  }
+}
 </style>

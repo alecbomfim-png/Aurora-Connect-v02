@@ -400,6 +400,58 @@ function stopFollow(showStatus=true){
   const pause=document.getElementById('pauseTracking');if(pause)pause.disabled=true;
   if(showStatus)document.getElementById('followStatus').textContent='Acompanhamento pausado.';
 }
+let rerouteInProgress=false,lastAutomaticRerouteAt=0;
+async function requestAutomaticReroute(point){
+ if(rerouteInProgress||!lastRoute||!navigator.onLine)return;
+ const now=Date.now();if(now-lastAutomaticRerouteAt<15000)return;
+ rerouteInProgress=true;lastAutomaticRerouteAt=now;
+ const status=document.getElementById('followStatus');
+ if(status)status.textContent='Fora da rota · procurando um novo caminho…';
+ try{
+  const destination=lastRoute.destination,mode=lastRoute.mode||'driving';
+  const profile=mode==='foot'?'foot':mode==='cycling'?'bike':'car';
+  const bases=profile==='car'?['https://router.project-osrm.org','https://routing.openstreetmap.de/routed-car']:['https://routing.openstreetmap.de/routed-'+profile];
+  let data=null,lastError=null;
+  for(const base of bases){
+   try{
+    const url=base+'/route/v1/driving/'+point.lng+','+point.lat+';'+destination[1]+','+destination[0]+'?overview=full&geometries=geojson&steps=true';
+    const response=await fetch(url);
+    if(!response.ok)throw Error('HTTP '+response.status);
+    const candidate=await response.json();
+    if(candidate.code==='Ok'&&candidate.routes?.length){data=candidate;break}
+    throw Error(candidate.message||'Rota não encontrada');
+   }catch(error){lastError=error}
+  }
+  if(!data)throw lastError||Error('Serviço de rotas indisponível.');
+  const route=data.routes[0],coords=route.geometry.coordinates.map(([lon,lat])=>[lat,lon]);
+  if(routeLayer)map.removeLayer(routeLayer);
+  routeLayer=L.polyline(coords,{color:'#087dff',weight:6,opacity:.95,lineCap:'round',lineJoin:'round'}).addTo(map);
+  if(routeMarkers)map.removeLayer(routeMarkers);
+  routeMarkers=L.layerGroup([L.marker([point.lat,point.lng]).bindPopup('<b>Nova partida</b>'),L.marker(destination).bindPopup('<b>Destino</b><br>'+esc(lastRoute.to))]).addTo(map);
+  routeSteps=(route.legs||[]).flatMap(leg=>leg.steps||[]).filter(step=>step.distance>2);
+  lastRoute={...lastRoute,origin:[point.lat,point.lng],from:'sua localização atual',distance:route.distance,duration:route.duration};
+  prepareFollowRoute(route,coords);
+  renderSceneRoute(coords);
+  const scene=document.querySelector('.scene3d');if(scene){scene.classList.add('route-preview');scene.dataset.driving='true'}
+  setAuroraMode('driving');
+  updateFollow(point,false);
+  announceFollow('Rota recalculada. Novo caminho até '+lastRoute.to+'. '+(route.distance/1000).toFixed(1).replace('.',',')+' quilômetros restantes.');
+  if(status)status.textContent='Nova rota calculada · acompanhamento GPS retomado.';
+  if(followWatch!==null&&navigator.geolocation)navigator.geolocation.clearWatch(followWatch);
+  followWatch=navigator.geolocation.watchPosition(pos=>{
+   const gpsPoint=L.latLng(pos.coords.latitude,pos.coords.longitude);
+   if(pos.coords.accuracy>120){document.getElementById('followStatus').textContent='Sinal GPS impreciso ('+Math.round(pos.coords.accuracy)+' m).';return}
+   updateFollow(gpsPoint,false);
+  },err=>{
+   document.getElementById('followStatus').textContent='GPS indisponível após o recálculo.';
+   notify(err.code===1?'Permita a localização nas configurações do navegador.':'Sinal GPS indisponível.');stopFollow(false);
+  },{enableHighAccuracy:true,maximumAge:1000,timeout:20000});
+  notify('Rota recalculada automaticamente. Continue seguindo as instruções.');
+ }catch(error){
+  if(status)status.textContent='Não foi possível recalcular agora. Mantenha a atenção e aguarde o GPS.';
+  notify('Não foi possível encontrar uma rota alternativa. '+(error?.message||'Tente novamente em local seguro.'));
+ }finally{rerouteInProgress=false}
+}
 function nearestFollowPoint(point){
   let best=Infinity,index=followNearestIndex;
   const start=Math.max(0,followNearestIndex-5),end=Math.min(followPoints.length,followNearestIndex+180);
@@ -462,10 +514,11 @@ function updateFollow(point,simulated=false){
   if(!followPoints.length)return;
   const near=nearestFollowPoint(point);
   if(!simulated&&near.distance>120){
-    if(!offRouteWarned){notify('Você parece estar fora da rota. Pare em local seguro e recalcule o trajeto.');offRouteWarned=true}
-    document.getElementById('followStatus').textContent='Fora do traçado previsto · aguardando retorno à rota.';
-    return;
-  }
+     if(!offRouteWarned){notify('Você saiu da rota. O Aurora está procurando um novo caminho.');offRouteWarned=true}
+     document.getElementById('followStatus').textContent='Fora do traçado previsto · recalculando automaticamente…';
+     requestAutomaticReroute(point);
+     return;
+   }
   offRouteWarned=false;followNearestIndex=Math.max(followNearestIndex,near.index);followProgress=Math.max(followProgress,near.progress);
   const scene=document.querySelector('.scene3d');
   if(scene){

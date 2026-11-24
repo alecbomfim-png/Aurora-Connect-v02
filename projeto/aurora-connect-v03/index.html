@@ -450,4 +450,82 @@ document.getElementById('pauseTracking').onclick=()=>stopFollow(true);
 .planning-status strong{font-size:11px;color:#d9f49b;letter-spacing:.5px}
 .planning-status span{font-size:10px;color:#eef5e9}
 @media(max-width:760px){.planning-status{top:auto;right:9px;bottom:220px;min-width:0;max-width:48%;padding:8px 9px;gap:4px}.planning-status strong{font-size:9px}.planning-status span{font-size:8px}.mapbox.aurora-driving .traffic-source-hud{top:158px}}
+
+/* Layout visual aprovado: mapa 2D à esquerda e via 3D imersiva à direita */
+.mapbox{
+  height:calc(100vh - 62px);
+  min-height:640px;
+  overflow:hidden;
+  background:#08110b;
+}
+#map{
+  inset:0 auto 0 0!important;
+  width:42%!important;
+  height:100%!important;
+  z-index:2;
+  border-right:2px solid #8bdc39;
+}
+.mapbox .scene3d{
+  inset:0 0 0 42%!important;
+  width:58%!important;
+  height:100%!important;
+  min-height:0;
+  z-index:3;
+  border:0;
+  border-left:2px solid #b8f15b;
+  border-radius:0;
+  box-shadow:none;
+}
+.mapbox .scene3d .scene-hud{
+  top:78px;
+  left:12px;
+  max-width:min(340px,72%);
+}
+.mapbox .scene3d .car3d{z-index:8}
+.mapbox .maptools{
+  top:10px;
+  left:10px;
+  right:10px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:7px;
+}
+.mapbox .scene-routebar{
+  flex:1 1 100%;
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  padding:8px;
+  border:1px solid #5b7547;
+  border-radius:12px;
+  background:#08120eeF;
+  box-shadow:0 4px 18px #0009;
+}
+.mapbox .scene-routebar input{flex:1 1 155px;min-width:0}
+.mapbox .scene-routebar button{flex:0 0 auto}
+.mapbox .drive{max-width:38%;width:min(300px,38%);z-index:8}
+.mapbox .mapnote{z-index:8;max-width:38%}
+.mapbox .traffic-source-hud{z-index:9;top:auto;bottom:12px;left:42%;max-width:56%}
+.mapbox .scene3d.route-preview .car3d{animation:none!important}
+.mapbox .scene3d.route-preview .driver-route-marker{opacity:1}
+@media(max-width:760px){
+  .mapbox{height:74vh;min-height:590px}
+  #map{width:39%!important}
+  .mapbox .scene3d{inset:0 0 0 39%!important;width:61%!important}
+  .mapbox .maptools{top:7px;left:7px;right:7px;gap:5px}
+  .mapbox .scene-routebar{padding:6px;gap:5px}
+  .mapbox .scene-routebar input{flex:1 1 120px;height:36px;font-size:11px;padding:0 8px}
+  .mapbox .scene-routebar button{padding:8px;font-size:10px}
+  .mapbox .scene-routebar select{flex:1 1 90px;min-width:0}
+  .mapbox .scene-hud{top:130px;left:7px;max-width:78%;padding:7px 9px}
+  .mapbox .scene-hud b{font-size:10px}
+  .mapbox .scene-hud span{font-size:9px}
+  .mapbox .drive{left:6px;bottom:7px;width:36%;max-width:36%;padding:7px}
+  .mapbox .drive .maneuver{font-size:11px}
+  .mapbox .drive .stats{gap:5px;font-size:9px}
+  .mapbox .drive .stats b{font-size:12px}
+  .mapbox .mapnote{right:auto;left:7px;bottom:105px;max-width:35%;font-size:8px;padding:5px}
+  .mapbox .traffic-source-hud{left:40%;right:6px;bottom:7px;max-width:59%}
+}
 </style>

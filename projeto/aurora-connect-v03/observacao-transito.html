@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07110b">
+<title>Aurora Connect V03 · Observação do trânsito</title>
+<style>
+:root{color-scheme:dark;--bg:#07110b;--panel:#101b13;--line:#29402c;--lime:#c8f169;--mint:#69e6a0;--muted:#aab8aa;--white:#f4f7ef}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font:14px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);background:#0c160e}
+.brand{display:flex;align-items:center;gap:12px}.dino{font-size:30px;line-height:1;filter:drop-shadow(0 0 9px #75d65b66)}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.11em;text-transform:uppercase}.clock{font-size:clamp(21px,4vw,29px);font-weight:750;font-variant-numeric:tabular-nums;letter-spacing:.04em}
+main{max-width:1440px;margin:auto;padding:16px;display:grid;gap:14px}.intro{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.eyebrow{color:var(--mint);font-size:10px;letter-spacing:.14em;font-weight:800}.intro h1{font-size:clamp(18px,3vw,25px);margin:4px 0}.sub{color:var(--muted);font-size:12px}.status{display:flex;gap:8px;align-items:center;background:#132319;border:1px solid #31533a;border-radius:999px;padding:8px 12px;font-size:11px;color:#c8f5d2}.dot{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 10px var(--mint)}
+.stage{position:relative;min-height:clamp(430px,65vh,720px);overflow:hidden;border:1px solid #344d36;border-radius:18px;background:linear-gradient(#9eb8bb 0%,#d4d9ce 37%,#536c56 38%,#18271c 62%,#111a14 100%);isolation:isolate;box-shadow:0 18px 55px #0008}
+.sky-glow{position:absolute;inset:0 0 50%;background:linear-gradient(115deg,#d9e4d6aa,transparent 40%,#f4df9b55);z-index:0}
+.city{position:absolute;left:0;right:0;top:20%;height:26%;display:flex;align-items:end;justify-content:space-around;gap:1%;padding:0 2%;z-index:1}
+.building{width:8%;height:70%;background:linear-gradient(90deg,#66746b,#b3b7a6 45%,#52675a);clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);box-shadow:inset 0 0 18px #142219}
+.building:nth-child(2){height:92%;width:11%}.building:nth-child(3){height:58%;width:7%}.building:nth-child(4){height:82%;width:10%}.building:nth-child(5){height:65%;width:8%}.building:nth-child(6){height:96%;width:9%}
+.building:after{content:"";display:block;width:100%;height:100%;background:repeating-linear-gradient(90deg,transparent 0 13px,#263a2d 14px 17px,transparent 18px 23px),repeating-linear-gradient(0deg,transparent 0 17px,#263a2d 18px 21px,transparent 22px 29px);opacity:.45}
+.greenbelt{position:absolute;z-index:2;top:39%;left:0;right:0;height:19%;background:linear-gradient(90deg,#1a3a23,#426441 25%,#1d4328 50%,#456746 75%,#1b3923);clip-path:polygon(0 35%,100% 0,100% 100%,0 100%)}
+.road{position:absolute;z-index:3;left:50%;top:43%;bottom:-10%;width:min(112%,1300px);transform:translateX(-50%);background:linear-gradient(90deg,#303738,#555b5a 48%,#343a3a);clip-path:polygon(39% 0,61% 0,100% 100%,0 100%);box-shadow:0 0 50px #000b}
+.road:before,.road:after{content:"";position:absolute;top:0;bottom:0;width:5px;background:#e9e5ce;opacity:.8}.road:before{left:39%}.road:after{right:39%}
+.lane{position:absolute;top:0;bottom:0;width:4px;left:50%;transform:translateX(-50%);background:repeating-linear-gradient(to bottom,#e9e6ce 0 25px,transparent 25px 54px);clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);opacity:.8}
+.lane.left{left:32%}.lane.right{left:68%}
+.car{position:absolute;z-index:6;width:clamp(28px,5vw,64px);height:auto;filter:drop-shadow(0 8px 6px #0009);will-change:transform,top;pointer-events:none}
+.car svg{display:block;width:100%;height:auto}
+.car.away{animation:away var(--dur,10s) linear var(--delay,0s) infinite}
+.car.toward{animation:toward var(--dur,9s) linear var(--delay,0s) infinite}
+@keyframes away{0%{top:91%;transform:translateX(0) scale(1.3);opacity:0}12%{opacity:1}100%{top:43%;transform:translateX(var(--drift,0px)) scale(.25);opacity:.12}}
+@keyframes toward{0%{top:42%;transform:translateX(0) scale(.22);opacity:.12}14%{opacity:1}100%{top:92%;transform:translateX(var(--drift,0px)) scale(1.35);opacity:0}}
+.road-label{position:absolute;z-index:9;left:14px;top:14px;padding:10px 12px;border:1px solid #ffffff55;border-radius:12px;background:#08130edb;backdrop-filter:blur(8px);max-width:min(360px,65%)}
+.road-label strong{display:block;color:var(--lime);font-size:13px}.road-label span{display:block;color:#edf4e9;font-size:10px;margin-top:3px}
+.overlay-status{position:absolute;z-index:9;right:14px;top:14px;padding:9px 12px;border:1px solid #ffffff55;border-radius:12px;background:#08130edb;font-size:10px;color:#eaf5e7}
+.overlay-status b{color:var(--lime)}
+.legend{position:absolute;z-index:9;bottom:14px;left:14px;display:flex;gap:8px;flex-wrap:wrap}.legend span{padding:8px 10px;background:#08130ee8;border:1px solid #526653;border-radius:9px;font-size:10px;color:#edf5e9}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;border-radius:10px;border:1px solid #56734c;background:#16251a;color:var(--white);text-decoration:none;font-weight:700;font-size:12px}.button.primary{background:var(--lime);border-color:var(--lime);color:#17220f}.note{padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:#0e1911;color:var(--muted);font-size:11px;line-height:1.55}.note strong{color:#e6f3dd}
+@media(max-width:600px){header{height:58px;padding:0 13px}.stage{min-height:540px;border-radius:12px}.city{top:23%;height:22%}.road{top:43%;width:145%}.road-label{left:9px;top:9px;max-width:64%;padding:8px}.overlay-status{right:9px;top:9px;padding:8px;font-size:9px}.legend{left:9px;right:9px;bottom:9px;gap:5px}.legend span{font-size:9px;padding:7px}.car{width:34px}main{padding:11px}}
+@media(prefers-reduced-motion:reduce){.car{animation-duration:30s!important}}
+</style>
+</head>
+<body>
+<header><div class="brand"><span class="dino" aria-hidden="true">🦖</span><div><small>Central de observação</small><strong>Aurora V03</strong></div></div><time class="clock" id="clock" aria-label="Horário local de Salvador">--:--</time></header>
+<main>
+<section class="intro"><div><div class="eyebrow">MODO OBSERVAÇÃO · SALVADOR / BA</div><h1>Av. Luís Viana x Marg. Luís Eduardo</h1><div class="sub">Referência visual selecionada da câmera pública da Transalvador</div></div><div class="status"><i class="dot"></i> Observação ativa · sem rota</div></section>
+<section class="stage" aria-label="Representação tridimensional simulada do fluxo de trânsito">
+<div class="sky-glow"></div><div class="city" aria-hidden="true"><i class="building"></i><i class="building"></i><i class="building"></i><i class="building"></i><i class="building"></i><i class="building"></i></div><div class="greenbelt"></div>
+<div class="road"><i class="lane"></i><i class="lane left"></i><i class="lane right"></i></div>
+<div class="road-label"><strong>Av. Luís Viana x Marg. Luís Eduardo</strong><span>Salvador · Bahia · cena 3D de referência</span></div>
+<div class="overlay-status"><b>SIMULAÇÃO VISUAL</b><br>Vídeo ao vivo ainda não conectado</div>
+<div class="legend"><span>↗ Fluxo em um sentido</span><span>↙ Fluxo no sentido oposto</span><span>Distâncias reais: indisponíveis</span></div>
+<div id="traffic" aria-hidden="true"></div>
+</section>
+<div class="controls"><a class="button primary" href="https://transalvador.salvador.ba.gov.br/" target="_blank" rel="noopener noreferrer">↗ Abrir câmera oficial da Transalvador</a><a class="button" href="./index.html">Voltar ao Aurora Connect V03</a></div>
+<div class="note"><strong>Transparência dos dados:</strong> os veículos desta tela se movimentam em uma animação 3D demonstrativa. Ela foi criada a partir da referência visual enviada, mas ainda não recebe o vídeo da câmera. Portanto, não representa a posição, a velocidade, a distância ou a quantidade real de veículos. A conexão direta depende de um endereço de transmissão compatível e de autorização da Transalvador. Nenhuma rota, destino ou GPS é iniciado nesta página.</div>
+</main>
+<script>
+const clock=document.getElementById('clock');
+function updateClock(){clock.textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Bahia',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())}
+updateClock();setInterval(updateClock,15000);
+const traffic=document.getElementById('traffic');
+const carSvg=(color)=>'<svg viewBox="0 0 100 150" role="img" aria-label="Veículo ilustrativo"><path d="M24 17 Q50 3 76 17 L91 48 L96 119 Q94 137 78 140 L22 140 Q6 137 4 119 L9 48Z" fill="'+color+'" stroke="#dce6dc" stroke-width="3"/><path d="M25 26 Q50 16 75 26 L84 57 L16 57Z" fill="#1a3034" stroke="#aabbb4" stroke-width="2"/><path d="M15 68 L85 68 L89 113 L11 113Z" fill="'+color+'" opacity=".88"/><rect x="10" y="119" width="15" height="8" rx="3" fill="#f4f0ce"/><rect x="75" y="119" width="15" height="8" rx="3" fill="#f4f0ce"/><rect x="2" y="75" width="8" height="24" rx="3" fill="#171c19"/><rect x="90" y="75" width="8" height="24" rx="3" fill="#171c19"/></svg>';
+const cars=[
+ {dir:'away',x:48,d:10,delay:-2,c:'#202d36',drift:'-10px'},
+ {dir:'away',x:60,d:12,delay:-7,c:'#d9ded8',drift:'8px'},
+ {dir:'away',x:38,d:11,delay:-4,c:'#687a6a',drift:'-5px'},
+ {dir:'away',x:54,d:13,delay:-10,c:'#8b3330',drift:'5px'},
+ {dir:'toward',x:29,d:10,delay:-5,c:'#e3e2d7',drift:'8px'},
+ {dir:'toward',x:42,d:12,delay:-1,c:'#293b49',drift:'-7px'},
+ {dir:'toward',x:19,d:11,delay:-8,c:'#a6b4a5',drift:'5px'}
+];
+cars.forEach(v=>{const el=document.createElement('div');el.className='car '+v.dir;el.style.left=v.x+'%';el.style.setProperty('--dur',v.d+'s');el.style.setProperty('--delay',v.delay+'s');el.style.setProperty('--drift',v.drift);el.innerHTML=carSvg(v.c);traffic.appendChild(el)});
+</script>
+</body></html>

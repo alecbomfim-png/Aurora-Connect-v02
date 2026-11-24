@@ -423,12 +423,30 @@ function armFollowVoice(){
     return false;
   }
   followVoiceUnlocked=true;
-  speechSynthesis.cancel();
+  try{
+    speechSynthesis.cancel();
+    speechSynthesis.resume();
+  }catch(error){}
   return true;
 }
 function announceFollow(text){
-  if(!followAutoVoice||!followVoiceUnlocked||!('speechSynthesis'in window))return;
-  const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';u.rate=1;u.volume=1;speechSynthesis.speak(u);
+  if(!followAutoVoice||!followVoiceUnlocked||!('speechSynthesis'in window)||typeof SpeechSynthesisUtterance==='undefined')return;
+  try{
+    const synth=window.speechSynthesis;
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='pt-BR';u.rate=0.96;u.pitch=1;u.volume=1;
+    const voices=synth.getVoices();
+    const portugueseVoice=voices.find(v=>/^pt-BR$/i.test(v.lang))||voices.find(v=>/^pt/i.test(v.lang));
+    if(portugueseVoice)u.voice=portugueseVoice;
+    u.onerror=(event)=>{
+      const status=document.getElementById('followStatus');
+      if(status&&event.error!=='canceled'&&event.error!=='interrupted')status.textContent='A voz do navegador não conseguiu falar. Verifique o áudio e a voz em português do iPhone.';
+    };
+    synth.resume();
+    synth.speak(u);
+  }catch(error){
+    notify('Não foi possível iniciar a orientação por voz neste navegador.');
+  }
 }
 function announceTripStart(){
   if(!lastRoute)return;
@@ -530,7 +548,14 @@ document.getElementById('simulateDrive').onclick=()=>{
 };
 document.getElementById('pauseTracking').onclick=()=>stopFollow(true);
 
-</script></body></html>
+</script>
+<style>
+/* Voz automática: controle de silenciar sempre identificável durante a condução. */
+#voiceMute{font-weight:800;min-height:36px;border-color:#9fca64;color:#e8f6d3}
+#voiceMute[aria-pressed="true"]{border-color:#d6a45a;color:#ffe0a8;background:#392b18}
+@media(max-width:760px){.mapbox.aurora-driving #voiceMute{font-size:10px;padding:8px 7px}}
+</style>
+</body></html>
 <style>
 /* Estado explícito da tela de planejamento: veículo do usuário imóvel. */
 .planning-status{position:absolute;z-index:535;right:16px;top:78px;display:flex;flex-direction:column;gap:5px;padding:11px 13px;background:#101913eF;border:1px solid #c8f169;border-radius:11px;box-shadow:0 5px 20px #0008;pointer-events:none;min-width:190px}

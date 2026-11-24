@@ -41,22 +41,21 @@ button.primary{background:var(--green);color:#062014;border-color:var(--green);f
 <header><div><div class="brand">AURORA CONNECT · V03</div><div class="sub">CENTRAL VIRTUAL DE TRÂNSITO · SALVADOR / BAHIA</div></div><div class="pill">PROTÓTIPO DE OBSERVAÇÃO</div></header>
 <main>
 <h1>Trânsito ao vivo + visão virtual 3D</h1>
-<p class="intro">Escolha um ponto monitorado, consulte a fonte pública e acompanhe ao lado uma representação 3D do fluxo. A cena 3D abaixo é uma simulação visual; não é uma reconstrução automática da câmera real.</p>
+<p class="intro">Escolha um ponto monitorado, consulte a fonte pública e acompanhe ao lado uma representação 3D do fluxo. A cena 3D abaixo é uma simulação visual; não é uma reconstrução automática da câmera real. O painel GAT+ é uma fonte complementar de indicadores de fluxo e velocidade, não uma transmissão de vídeo.</p>
 <div class="toolbar">
 <select id="camera" aria-label="Selecionar câmera">
 <option value="Bonocô — Estação do Metrô">Bonocô — Estação do Metrô</option>
-<option value="Avenida Paralela — Viaduto Eliana Kértesz">Paralela — Viaduto Eliana Kértesz</option>
+<option value="Avenida Paralela — marginal de acesso à Av. Luís Eduardo Magalhães">Paralela — marginal de acesso à Av. Luís Eduardo Magalhães</option>
 <option value="Avenida Orlando Gomes — Piatã">Orlando Gomes — Piatã</option>
 <option value="Praça João Mangabeira — Barris">Praça João Mangabeira — Barris</option>
 <option value="Boca do Rio — Avenida Jorge Amado">Boca do Rio — Jorge Amado</option>
-<option value="Pituba — Rua Pernambuco">Pituba — Rua Pernambuco</option>
-<option value="Pernambués — Estação do Metrô">Pernambués — Estação do Metrô</option>
-<option value="Avenida Manoel Dias">Avenida Manoel Dias</option>
+<option value="Rua Pernambuco com Avenida Manoel Dias — Pituba">Rua Pernambuco × Avenida Manoel Dias — Pituba</option>
+<option value="Avenida Paralela — Viaduto Eliana Kértesz">Paralela — Viaduto Eliana Kértesz</option>
 </select>
-<button class="primary" id="openSource">Abrir câmera oficial</button><button id="pause">Pausar simulação</button>
+<button class="primary" id="openSource">Abrir câmeras oficiais</button><a class="action" href="https://mobilidadesalvador.com.br/gat3/scorecardGAT.aspx" target="_blank" rel="noopener">Abrir painel GAT+</a><button id="pause">Pausar simulação</button>
 </div>
 <div class="grid">
-<section class="panel"><h2>01 · Fonte pública — Transalvador</h2><div class="frame"><div class="fallback"><strong>Imagem oficial da câmera</strong>O portal público disponibiliza a opção “Veja ao Vivo”. A incorporação direta do vídeo nesta página ainda depende de confirmar o endereço do fluxo e as permissões de reprodução.<br><br><a class="action" href="https://transalvador.salvador.ba.gov.br/" target="_blank" rel="noopener">Acessar portal Transalvador ↗</a></div></div><div class="note">Fonte externa: Transalvador. A câmera selecionada será aberta no portal oficial; não exibimos uma transmissão não verificada dentro deste quadro.</div></section>
+<section class="panel"><h2>01 · Fonte pública — Transalvador</h2><div class="frame"><div class="fallback"><strong>Imagem oficial da câmera</strong>O portal público disponibiliza a opção “Veja ao Vivo”. A incorporação direta do vídeo nesta página ainda depende de confirmar o endereço do fluxo e as permissões de reprodução.<br><br><a class="action" href="https://transalvador.salvador.ba.gov.br/" target="_blank" rel="noopener">Acessar portal Transalvador ↗</a></div></div><div class="note">Fonte externa: Transalvador. A seleção identifica o ponto de interesse. O portal oficial reúne as transmissões; não exibimos uma transmissão não verificada dentro deste quadro. O GAT+ oferece indicadores de fluidez e velocidade em trechos monitorados.</div></section>
 <section class="panel"><h2>02 · Representação virtual 3D</h2><div class="scene" id="scene"><div class="horizon"></div><div class="road"></div><div class="lane"></div><div class="car c1"></div><div class="car c2"></div><div class="car c3"></div><div class="car c4"></div><div class="overlay"><span class="pill">SIMULAÇÃO 3D</span><span class="pill" id="sceneName">BONOCÔ</span></div></div><div class="stats"><div class="stat"><small>Origem do movimento</small><b>Simulado</b></div><div class="stat"><small>Fluxo observado</small><b>Visual</b></div><div class="stat"><small>Atualização da câmera</small><b>Não conectada</b></div><div class="stat"><small>Sentidos</small><b>Dois sentidos</b></div></div><div class="note status">Atenção: os veículos animados não representam contagem ou velocidade medidas na câmera. A sincronização com dados reais será uma etapa posterior, condicionada ao acesso técnico aos dados.</div></section>
 </div>
 <div class="panel" style="margin-top:14px"><h2>Como vamos avançar</h2><div class="links"><span class="pill">1 · Validar imagem pública</span><span class="pill">2 · Identificar acesso autorizado ao fluxo</span><span class="pill">3 · Obter dados de velocidade/volume</span><span class="pill">4 · Sincronizar a cena 3D</span></div></div>

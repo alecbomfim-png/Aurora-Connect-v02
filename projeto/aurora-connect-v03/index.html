@@ -438,6 +438,7 @@ async function requestAutomaticReroute(point){
   announceFollow('Rota recalculada. Novo caminho até '+lastRoute.to+'. '+(route.distance/1000).toFixed(1).replace('.',',')+' quilômetros restantes.');
   if(status)status.textContent='Nova rota calculada · acompanhamento GPS retomado.';
   if(followWatch!==null&&navigator.geolocation)navigator.geolocation.clearWatch(followWatch);
+  document.getElementById('pauseTracking').disabled=false;
   followWatch=navigator.geolocation.watchPosition(pos=>{
    const gpsPoint=L.latLng(pos.coords.latitude,pos.coords.longitude);
    if(pos.coords.accuracy>120){document.getElementById('followStatus').textContent='Sinal GPS impreciso ('+Math.round(pos.coords.accuracy)+' m).';return}

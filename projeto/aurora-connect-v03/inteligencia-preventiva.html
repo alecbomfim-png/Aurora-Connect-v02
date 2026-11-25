@@ -73,7 +73,7 @@ const pad=n=>String(n).padStart(2,'0');
 const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());document.getElementById('when').value=now.toISOString().slice(0,16);
 function read(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return []}}
 function save(items){localStorage.setItem(KEY,JSON.stringify(items))}
-function safe(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function safe(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}\nfunction safeHttpUrl(value){try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return ''}}
 function render(){
  const items=read();list.replaceChildren();
  if(!items.length){list.innerHTML='<div class="empty">Nenhuma ocorrência cadastrada neste navegador.</div>';return}
@@ -81,7 +81,7 @@ function render(){
   const el=document.createElement('article');el.className='event';
   const status=item.status==='confirmado'?'confirmed':item.status==='descartado'?'rejected':'';
   const date=new Date(item.when).toLocaleString('pt-BR');
-  el.innerHTML='<h3>'+safe(item.kind)+' · '+safe(item.place)+'</h3><div class="state '+status+'">'+(item.status==='confirmado'?'CONFIRMADO PELO OPERADOR':item.status==='descartado'?'DESCARTADO':'PISTA · EM VERIFICAÇÃO')+'</div><p>'+safe(item.details)+'</p><small>'+safe(item.sourceType)+' · informado em '+safe(date)+'</small>'+(item.url?'<p><a href="'+safe(item.url)+'" target="_blank" rel="noopener">Abrir fonte ↗</a></p>':'')+'<div class="actions"><button class="secondary" data-action="confirm" data-id="'+item.id+'">Marcar corroborado</button><button class="secondary" data-action="pending" data-id="'+item.id+'">Voltar para verificação</button><button class="secondary" data-action="discard" data-id="'+item.id+'">Descartar</button><button class="secondary" data-action="delete" data-id="'+item.id+'">Excluir</button></div>';
+  el.innerHTML='<h3>'+safe(item.kind)+' · '+safe(item.place)+'</h3><div class="state '+status+'">'+(item.status==='confirmado'?'CORROBORADO PELO OPERADOR · NÃO É ALERTA AUTOMÁTICO':item.status==='descartado'?'DESCARTADO':'PISTA · EM VERIFICAÇÃO')+'</div><p>'+safe(item.details)+'</p><small>'+safe(item.sourceType)+' · informado em '+safe(date)+'</small>'+(safeHttpUrl(item.url)?'<p><a href="'+safe(safeHttpUrl(item.url))+'" target="_blank" rel="noopener noreferrer">Abrir fonte ↗</a></p>':'')+'<div class="actions"><button class="secondary" data-action="confirm" data-id="'+item.id+'">Marcar corroborado</button><button class="secondary" data-action="pending" data-id="'+item.id+'">Voltar para verificação</button><button class="secondary" data-action="discard" data-id="'+item.id+'">Descartar</button><button class="secondary" data-action="delete" data-id="'+item.id+'">Excluir</button></div>';
   list.appendChild(el);
  });
 }

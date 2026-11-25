@@ -73,7 +73,8 @@ const pad=n=>String(n).padStart(2,'0');
 const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());document.getElementById('when').value=now.toISOString().slice(0,16);
 function read(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return []}}
 function save(items){localStorage.setItem(KEY,JSON.stringify(items))}
-function safe(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}\nfunction safeHttpUrl(value){try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return ''}}
+function safe(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function safeHttpUrl(value){try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return ''}}
 function render(){
  const items=read();list.replaceChildren();
  if(!items.length){list.innerHTML='<div class="empty">Nenhuma ocorrência cadastrada neste navegador.</div>';return}

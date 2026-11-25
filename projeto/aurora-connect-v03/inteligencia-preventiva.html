@@ -22,7 +22,7 @@ button{border:0;border-radius:9px;padding:10px 13px;background:var(--lime);color
 button.secondary{background:#263329;border:1px solid #4c604e;color:var(--text)}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
 .event{border:1px solid #405044;border-radius:11px;padding:12px;margin-top:9px;background:#141e17}.event h3{font-size:13px;margin:0 0 5px}.event p{font-size:11px;line-height:1.5;color:#c5d0c4;margin:5px 0}.event small{font-size:10px;color:var(--muted)}
-.event .state{font-size:10px;font-weight:800;color:var(--amber)}.event .state.confirmed{color:var(--mint)}.event .state.rejected{color:var(--red)}
+.camera-entry{border:1px solid #405044;border-radius:10px;padding:10px;margin-top:8px;background:#202b23}.camera-entry label{margin-top:5px}.camera-entry .actions{margin-top:7px}.event .camera-list{margin:8px 0;padding:8px;border-left:2px solid var(--mint);background:#202b23;border-radius:7px}.event .camera-list b{color:var(--mint)}.event .state{font-size:10px;font-weight:800;color:var(--amber)}.event .state.confirmed{color:var(--mint)}.event .state.rejected{color:var(--red)}
 .rule{padding:11px;border-left:3px solid var(--lime);background:#202b23;border-radius:8px;font-size:11px;line-height:1.55;color:#dce6d9}
 .empty{padding:14px;border:1px dashed #50604f;border-radius:10px;color:var(--muted);font-size:11px;line-height:1.5}
 footer{font-size:10px;color:var(--muted);line-height:1.55;padding:0 2px}
@@ -47,8 +47,12 @@ footer{font-size:10px;color:var(--muted);line-height:1.55;padding:0 2px}
 <form id="eventForm">
 <label for="kind">Tipo de ocorrência</label><select id="kind" required><option value="Manifestação / reivindicação">Manifestação / reivindicação</option><option value="Congestionamento">Congestionamento</option><option value="Acidente">Acidente</option><option value="Interdição / obra">Interdição / obra</option><option value="Alagamento">Alagamento</option><option value="Veículo parado / obstáculo">Veículo parado / obstáculo</option><option value="Evento público">Evento público</option><option value="Outro">Outro</option></select>
 <label for="place">Rua, avenida, bairro ou referência</label><input id="place" placeholder="Ex.: Av. Paralela, sentido aeroporto" required>
-<div class="row"><div><label for="when">Quando ocorreu / foi informado?</label><input id="when" type="datetime-local" required></div><div><label for="sourceType">Tipo de fonte</label><select id="sourceType"><option>Órgão oficial</option><option>Emissora / reportagem</option><option>Instagram / rede social</option><option>Câmera pública</option><option>Relato de usuário</option><option>Outro</option></select></div></div>
-<label for="url">Link da publicação, notícia ou comunicado</label><input id="url" type="url" placeholder="https://...">
+<div class="row"><div><label for="when">Quando ocorreu / foi informado?</label><input id="when" type="datetime-local" required></div><div><label for="sourceType">Categoria da fonte</label><select id="sourceType"><option>Órgão público</option><option>Câmera pública</option><option>Emissora / reportagem</option><option>Instagram / rede social</option><option>Relato de usuário</option><option>Outro</option></select></div></div>
+<label for="sourceName">Nome do órgão ou da fonte</label><select id="sourceName"><option>Transalvador</option><option>PRF</option><option>Polícia Militar da Bahia (PMBA)</option><option>Polícia Rodoviária Estadual (PRE/PMBA)</option><option>Corpo de Bombeiros Militar da Bahia</option><option>Defesa Civil</option><option>INMET</option><option>SEINFRA-BA</option><option>Outro / não identificado</option></select>
+<label for="url">Link da publicação, notícia ou comunicado (se houver)</label><input id="url" type="url" placeholder="https://...">
+<div class="rule" style="margin-top:12px"><b>Câmeras vinculadas ao mesmo trecho</b><br>Adicione mais de um ponto de observação nesta ficha. O link pode ser do portal oficial; isso não significa que o vídeo esteja integrado ao Aurora.</div>
+<div id="cameraFields"><div class="camera-entry"><label>Nome ou localização da câmera</label><input class="camera-name" placeholder="Ex.: Viaduto Eliana Kértesz – Av. Paralela"><label>Sentido observado</label><input class="camera-direction" placeholder="Ex.: sentido aeroporto"><label>Link da câmera ou portal (opcional)</label><input class="camera-url" type="url" placeholder="https://..."></div></div>
+<div class="actions"><button class="secondary" type="button" id="addCamera">＋ Adicionar outra câmera</button></div>
 <label for="details">O que foi informado? (sem acrescentar suposições)</label><textarea id="details" placeholder="Descreva o fato, o sentido da via e o trecho citado." required></textarea>
 <div class="actions"><button type="submit">＋ Registrar como pista</button></div>
 </form></section>
@@ -68,7 +72,9 @@ footer{font-size:10px;color:var(--muted);line-height:1.55;padding:0 2px}
 </main>
 <script>
 const KEY='aurora-v03-preventive-events-v1';
-const form=document.getElementById('eventForm'),list=document.getElementById('events');
+const form=document.getElementById('eventForm'),list=document.getElementById('events'),cameraFields=document.getElementById('cameraFields');
+document.getElementById('addCamera').addEventListener('click',()=>{const entry=document.createElement('div');entry.className='camera-entry';entry.innerHTML='<label>Nome ou localização da câmera</label><input class="camera-name" placeholder="Ex.: Outra câmera da Avenida Paralela"><label>Sentido observado</label><input class="camera-direction" placeholder="Ex.: sentido centro"><label>Link da câmera ou portal (opcional)</label><input class="camera-url" type="url" placeholder="https://..."><div class="actions"><button class="secondary" type="button" data-remove-camera>Remover esta câmera</button></div>';cameraFields.appendChild(entry)});
+cameraFields.addEventListener('click',e=>{const b=e.target.closest('[data-remove-camera]');if(b)b.closest('.camera-entry').remove()});
 const pad=n=>String(n).padStart(2,'0');
 const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());document.getElementById('when').value=now.toISOString().slice(0,16);
 function read(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return []}}
@@ -82,13 +88,13 @@ function render(){
   const el=document.createElement('article');el.className='event';
   const status=item.status==='confirmado'?'confirmed':item.status==='descartado'?'rejected':'';
   const date=new Date(item.when).toLocaleString('pt-BR');
-  el.innerHTML='<h3>'+safe(item.kind)+' · '+safe(item.place)+'</h3><div class="state '+status+'">'+(item.status==='confirmado'?'CORROBORADO PELO OPERADOR · NÃO É ALERTA AUTOMÁTICO':item.status==='descartado'?'DESCARTADO':'PISTA · EM VERIFICAÇÃO')+'</div><p>'+safe(item.details)+'</p><small>'+safe(item.sourceType)+' · informado em '+safe(date)+'</small>'+(safeHttpUrl(item.url)?'<p><a href="'+safe(safeHttpUrl(item.url))+'" target="_blank" rel="noopener noreferrer">Abrir fonte ↗</a></p>':'')+'<div class="actions"><button class="secondary" data-action="confirm" data-id="'+item.id+'">Marcar corroborado</button><button class="secondary" data-action="pending" data-id="'+item.id+'">Voltar para verificação</button><button class="secondary" data-action="discard" data-id="'+item.id+'">Descartar</button><button class="secondary" data-action="delete" data-id="'+item.id+'">Excluir</button></div>';
+  el.innerHTML='<h3>'+safe(item.kind)+' · '+safe(item.place)+'</h3><div class="state '+status+'">'+(item.status==='confirmado'?'CORROBORADO PELO OPERADOR · NÃO É ALERTA AUTOMÁTICO':item.status==='descartado'?'DESCARTADO':'PISTA · EM VERIFICAÇÃO')+'</div><p>'+safe(item.details)+'</p><small>'+safe(item.sourceType)+' · '+safe(item.sourceName||'Fonte não identificada')+' · informado em '+safe(date)+'</small>'+(item.cameras&&item.cameras.length?'<div class="camera-list"><b>Câmeras vinculadas ('+item.cameras.length+')</b>'+item.cameras.map(c=>'<p>'+safe(c.name)+' · '+safe(c.direction||'sentido não informado')+(safeHttpUrl(c.url)?' · <a href="'+safe(safeHttpUrl(c.url))+'" target="_blank" rel="noopener noreferrer">Abrir fonte ↗</a>':'')+'</p>').join('')+'</div>':'')+(safeHttpUrl(item.url)?'<p><a href="'+safe(safeHttpUrl(item.url))+'" target="_blank" rel="noopener noreferrer">Abrir fonte ↗</a></p>':'')+'<div class="actions"><button class="secondary" data-action="confirm" data-id="'+item.id+'">Marcar corroborado</button><button class="secondary" data-action="pending" data-id="'+item.id+'">Voltar para verificação</button><button class="secondary" data-action="discard" data-id="'+item.id+'">Descartar</button><button class="secondary" data-action="delete" data-id="'+item.id+'">Excluir</button></div>';
   list.appendChild(el);
  });
 }
 form.addEventListener('submit',e=>{
  e.preventDefault();
- const item={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),kind:document.getElementById('kind').value,place:document.getElementById('place').value.trim(),when:document.getElementById('when').value,sourceType:document.getElementById('sourceType').value,url:document.getElementById('url').value.trim(),details:document.getElementById('details').value.trim(),status:'pista'};
+ const item={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),kind:document.getElementById('kind').value,place:document.getElementById('place').value.trim(),when:document.getElementById('when').value,sourceType:document.getElementById('sourceType').value,sourceName:document.getElementById('sourceName').value,url:document.getElementById('url').value.trim(),cameras:Array.from(cameraFields.querySelectorAll('.camera-entry')).map(entry=>({name:entry.querySelector('.camera-name').value.trim(),direction:entry.querySelector('.camera-direction').value.trim(),url:entry.querySelector('.camera-url').value.trim()})).filter(c=>c.name),details:document.getElementById('details').value.trim(),status:'pista'};
  const items=read();items.push(item);save(items);form.reset();document.getElementById('when').value=now.toISOString().slice(0,16);render();
 });
 list.addEventListener('click',e=>{

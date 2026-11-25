@@ -55,6 +55,7 @@ footer{font-size:10px;color:var(--muted);line-height:1.55;padding:0 2px}
 <div class="actions"><button class="secondary" type="button" id="addCamera">＋ Adicionar outra câmera</button></div>
 <label for="details">O que foi informado? (sem acrescentar suposições)</label><textarea id="details" placeholder="Descreva o fato, o sentido da via e o trecho citado." required></textarea>
 <div class="actions"><button type="submit">＋ Registrar como pista</button></div>
+<div id="saveNotice" class="empty" role="status" hidden></div>
 </form></section>
 <section class="card"><h2>Fila de verificação</h2><p class="muted">O Aurora separa pista, ocorrência corroborada e alerta confirmado. O motorista só deve receber um aviso assertivo quando houver evidência suficiente e atual.</p>
 <div class="rule"><b>Regra de confirmação:</b> buscar confirmação em fonte oficial ou em pelo menos duas fontes independentes e coerentes. Checar local, sentido, horário e se o bloqueio ainda está ativo. Repostagens do mesmo vídeo ou texto não contam como fontes independentes.</div>
@@ -85,7 +86,7 @@ function render(){
  const items=read();list.replaceChildren();
  if(!items.length){list.innerHTML='<div class="empty">Nenhuma ocorrência cadastrada neste navegador.</div>';return}
  items.slice().reverse().forEach(item=>{
-  const el=document.createElement('article');el.className='event';
+  const el=document.createElement('article');el.className='event';el.dataset.id=item.id;
   const status=item.status==='confirmado'?'confirmed':item.status==='descartado'?'rejected':'';
   const date=new Date(item.when).toLocaleString('pt-BR');
   el.innerHTML='<h3>'+safe(item.kind)+' · '+safe(item.place)+'</h3><div class="state '+status+'">'+(item.status==='confirmado'?'CORROBORADO PELO OPERADOR · NÃO É ALERTA AUTOMÁTICO':item.status==='descartado'?'DESCARTADO':'PISTA · EM VERIFICAÇÃO')+'</div><p>'+safe(item.details)+'</p><small>'+safe(item.sourceType)+' · '+safe(item.sourceName||'Fonte não identificada')+' · informado em '+safe(date)+'</small>'+(item.cameras&&item.cameras.length?'<div class="camera-list"><b>Câmeras vinculadas ('+item.cameras.length+')</b>'+item.cameras.map(c=>'<p>'+safe(c.name)+' · '+safe(c.direction||'sentido não informado')+(safeHttpUrl(c.url)?' · <a href="'+safe(safeHttpUrl(c.url))+'" target="_blank" rel="noopener noreferrer">Abrir fonte ↗</a>':'')+'</p>').join('')+'</div>':'')+(safeHttpUrl(item.url)?'<p><a href="'+safe(safeHttpUrl(item.url))+'" target="_blank" rel="noopener noreferrer">Abrir fonte ↗</a></p>':'')+'<div class="actions"><button class="secondary" data-action="confirm" data-id="'+item.id+'">Marcar corroborado</button><button class="secondary" data-action="pending" data-id="'+item.id+'">Voltar para verificação</button><button class="secondary" data-action="discard" data-id="'+item.id+'">Descartar</button><button class="secondary" data-action="delete" data-id="'+item.id+'">Excluir</button></div>';
@@ -95,7 +96,11 @@ function render(){
 form.addEventListener('submit',e=>{
  e.preventDefault();
  const item={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),kind:document.getElementById('kind').value,place:document.getElementById('place').value.trim(),when:document.getElementById('when').value,sourceType:document.getElementById('sourceType').value,sourceName:document.getElementById('sourceName').value,url:document.getElementById('url').value.trim(),cameras:Array.from(cameraFields.querySelectorAll('.camera-entry')).map(entry=>({name:entry.querySelector('.camera-name').value.trim(),direction:entry.querySelector('.camera-direction').value.trim(),url:entry.querySelector('.camera-url').value.trim()})).filter(c=>c.name),details:document.getElementById('details').value.trim(),status:'pista'};
- const items=read();items.push(item);save(items);form.reset();document.getElementById('when').value=now.toISOString().slice(0,16);render();
+ const items=read();items.push(item);save(items);form.reset();
+ const extraCameras=Array.from(cameraFields.querySelectorAll('.camera-entry')).slice(1);extraCameras.forEach(entry=>entry.remove());
+ const current=new Date();current.setMinutes(current.getMinutes()-current.getTimezoneOffset());document.getElementById('when').value=current.toISOString().slice(0,16);
+ const notice=document.getElementById('saveNotice');notice.hidden=false;notice.textContent='Registro salvo neste navegador. Ele aparece na Fila de verificação abaixo; você pode continuar adicionando câmeras em um próximo registro.';
+ render();const savedCard=list.querySelector('[data-id="'+item.id+'"]');if(savedCard)savedCard.scrollIntoView({behavior:'smooth',block:'center'});
 });
 list.addEventListener('click',e=>{
  const b=e.target.closest('button[data-action]');if(!b)return;

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07110b">
+<title>Aurora Connect V03 · Painel de observação</title>
+<style>
+:root{color-scheme:dark;--bg:#07110b;--panel:#101d14;--line:#294431;--green:#39ef70;--lime:#c8f169;--muted:#a9b8aa;--amber:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(140deg,#07110b,#101b13);color:#f3f7f2;font:14px system-ui,-apple-system,sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:#09130c}
+.brand{font-weight:900;letter-spacing:.5px}.brand span{color:var(--green)}.clock{text-align:right;font-weight:800}.clock small{display:block;color:var(--muted);font-size:11px;font-weight:500}
+main{max-width:1200px;margin:auto;padding:16px;display:grid;gap:14px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.eyebrow{color:var(--green);font-size:10px;font-weight:900;letter-spacing:1.5px}
+.grid{display:grid;grid-template-columns:1fr 1.35fr .55fr;gap:12px}.card{background:linear-gradient(145deg,#142219,#0e1912);border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}.card h2{font-size:14px;margin:0 0 10px}.muted{color:var(--muted);font-size:11px;line-height:1.5}
+.map{height:350px;border-radius:11px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 55% 48%,#294c31 0 9%,transparent 10%),linear-gradient(35deg,transparent 43%,#58665a 44% 47%,#15251a 48% 54%,#58665a 55% 58%,transparent 59%),linear-gradient(115deg,#1b3925,#102117 55%,#203e29)}
+.map:before{content:"";position:absolute;width:150%;height:42px;left:-20%;top:48%;background:#28332d;border:3px solid #839185;transform:rotate(-24deg);box-shadow:0 0 0 3px #101a13}.route{position:absolute;width:150%;height:5px;left:-20%;top:53%;background:#2e9bff;transform:rotate(-24deg);box-shadow:0 0 12px #2e9bff}.pin{position:absolute;left:53%;top:39%;background:#07110b;border:2px solid var(--green);border-radius:20px;padding:7px 9px;font-size:10px;font-weight:800}
+.maplabel{position:absolute;left:12px;top:12px;background:#07110bdc;padding:7px 9px;border-radius:8px;font-size:10px}
+.camera{height:350px;border-radius:11px;border:1px solid #405447;background:repeating-linear-gradient(135deg,#14241a,#14241a 18px,#172a1e 18px,#172a1e 36px);display:flex;align-items:center;justify-content:center;text-align:center;padding:18px}
+.camera strong{display:block;font-size:16px;margin:9px 0}.status{display:inline-block;border-radius:20px;padding:5px 9px;font-size:9px;font-weight:900;background:#49391c;color:var(--amber)}.status.ok{background:#153c25;color:#8ef5ae}
+.big{font-size:30px;font-weight:900;color:var(--green)}.metric{border-top:1px solid var(--line);padding:12px 0}.metric small{display:block;color:var(--muted);font-size:10px}
+.notice{border:1px solid #6b5525;background:#241e10;border-radius:12px;padding:12px;color:#ffe3a0;font-size:12px;line-height:1.5}
+.sources{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.source{border:1px solid var(--line);border-radius:10px;padding:11px;background:#101b13}.source b{font-size:11px}.source p{font-size:10px;color:var(--muted);line-height:1.4;min-height:38px}.source a{color:var(--lime);font-size:10px}
+select,button{border-radius:9px;padding:10px;background:#101c13;color:#f3f7f2;border:1px solid #45604a;font:inherit;font-size:11px}button{background:var(--lime);color:#142015;font-weight:900;border:0;cursor:pointer}
+footer{font-size:10px;color:var(--muted);line-height:1.5}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.map,.camera{height:250px}.sources{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){header{padding:11px}.sources{grid-template-columns:1fr}main{padding:11px}.clock{font-size:12px}}
+</style>
+</head>
+<body>
+<header><div class="brand">🦖 <span>AURORA</span> CONNECT <small style="display:block;color:#a9b8aa;font-size:9px;letter-spacing:1.3px">OBSERVAÇÃO PREVENTIVA · V03</small></div><div class="clock"><div id="time">--:--</div><small id="date">Carregando data…</small></div></header>
+<main>
+<div class="top"><div><div class="eyebrow">CENTRAL DE OBSERVAÇÃO · SALVADOR / BA</div><h1 style="font-size:clamp(21px,4vw,30px);margin:5px 0">Informação antes do motorista chegar.</h1><div class="muted">Painel de teste funcional: relógio local, seleção de referência e acesso às fontes oficiais.</div></div><span class="status">MODO DE TESTE · SEM DADOS AO VIVO</span></div>
+<section class="grid">
+<div class="card"><h2>Mapa de referência</h2><div class="map"><div class="maplabel">SALVADOR · ESQUEMA ILUSTRATIVO</div><div class="route"></div><div class="pin" id="mapPin">📷 Ponto de observação</div></div><p class="muted">Mapa esquemático, sem GPS, rota ou posição real do veículo.</p></div>
+<div class="card"><h2 id="cameraTitle">Câmera de referência · Av. Paralela</h2><div class="camera"><div><span class="status">IMAGEM NÃO CONECTADA</span><strong id="cameraName">Viaduto Eliana Kértesz – Av. Paralela</strong><div class="muted">A visualização real depende de autorização e integração técnica. Nenhuma imagem está sendo recebida neste teste.</div></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><select id="cameraSelect" aria-label="Selecionar ponto de observação"><option value="eliana">Viaduto Eliana Kértesz – Av. Paralela</option><option value="luis">Av. Luís Viana × Marginal Luís Eduardo Magalhães</option></select><button id="openPortal">Consultar Transalvador ↗</button></div></div>
+<aside class="card"><h2>Estado dos dados</h2><div class="metric"><div class="big">—</div><small>Velocidade atual · sem sensor</small></div><div class="metric"><div class="big">—</div><small>Tempo de percurso · sem feed</small></div><div class="metric"><span class="status">AGUARDANDO FONTE</span><small style="display:block;margin-top:7px">Trânsito do trecho não verificado</small></div></aside>
+</section>
+<div class="notice"><b>Transparência:</b> este painel não declara trânsito livre, congestionamento, velocidade, acidente ou tempo de chegada. O selo “AO VIVO” só será habilitado após stream autorizado e atualização efetivamente validada.</div>
+<section class="card"><h2>Fontes para alimentar o Aurora</h2><div class="sources">
+<div class="source"><b>Transalvador · câmeras e avisos</b><p>Consulta manual do portal público. Integração automática ainda não disponível.</p><a href="https://transalvador.salvador.ba.gov.br/" target="_blank" rel="noopener">Abrir portal oficial ↗</a></div>
+<div class="source"><b>GAT+ · fluidez por trecho</b><p>Indicadores agregados; conferir horário e condições de uso.</p><a href="https://mobilidadesalvador.com.br/gat3/scorecardGAT.aspx" target="_blank" rel="noopener">Abrir painel GAT+ ↗</a></div>
+<div class="source"><b>Notícias · Bahia</b><p>Fonte complementar para ocorrências; notícia não confirma sozinha impacto viário.</p><a href="https://g1.globo.com/ba/bahia/" target="_blank" rel="noopener">Abrir G1 Bahia ↗</a></div>
+</div></section>
+<footer>Teste de interface independente. Não usa GPS, não captura imagens, não consulta APIs nem envia dados. Horário e data são atualizados pelo navegador com fuso America/Bahia. A representação do mapa é apenas ilustrativa.</footer>
+</main>
+<script>
+const fmt=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Bahia',hour:'2-digit',minute:'2-digit',hour12:false});
+const dfmt=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Bahia',weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'});
+function tick(){const d=new Date();document.getElementById('time').textContent=fmt.format(d);document.getElementById('date').textContent=dfmt.format(d)}
+tick();setInterval(tick,15000);
+const names={eliana:'Viaduto Eliana Kértesz – Av. Paralela',luis:'Av. Luís Viana × Marginal Luís Eduardo Magalhães'};
+document.getElementById('cameraSelect').addEventListener('change',e=>{const n=names[e.target.value];document.getElementById('cameraName').textContent=n;document.getElementById('cameraTitle').textContent='Ponto de observação · '+(e.target.value==='eliana'?'Av. Paralela':'Av. Luís Viana');document.getElementById('mapPin').textContent='📷 '+(e.target.value==='eliana'?'Viad. Eliana Kértesz':'Av. Luís Viana')});
+document.getElementById('openPortal').addEventListener('click',()=>window.open('https://transalvador.salvador.ba.gov.br/','_blank','noopener'));
+</script>
+</body></html>

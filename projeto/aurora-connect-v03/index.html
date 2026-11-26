@@ -591,7 +591,7 @@ document.getElementById('startTracking').onclick=()=>{
 };
 document.getElementById('simulateDrive').onclick=()=>{
   if(!followPoints.length){notify('Calcule uma rota antes de iniciar a simulação.');return}
-  armFollowVoice();announceTripStart();
+  armFollowVoice();announceTripStart();setRouteFollowDisplay(true);
   stopFollow(false);window.__auroraLastAnnouncedStep=-1;followProgress=0;followNearestIndex=0;
   document.getElementById('pauseTracking').disabled=false;
   document.getElementById('followStatus').textContent='Demonstração simulada · não representa deslocamento real.';

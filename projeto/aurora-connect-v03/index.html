@@ -723,4 +723,36 @@ aside.origin-manual #origin,aside.origin-manual label[for="origin"]{display:bloc
 })();
 </script>
 
+
+<style id="aurora-single-destination">
+/* Um único campo de destino, na barra superior do mapa. */
+.layout aside .card:has(#destination){display:none!important}
+.mapbox .scene-routebar #origin,.mapbox .scene-routebar label[for="origin"]{display:none!important}
+.mapbox.origin-manual .scene-routebar #origin,
+.mapbox.origin-manual .scene-routebar label[for="origin"]{display:block!important}
+.mapbox .scene-routebar #toggleOrigin{display:inline-flex!important;align-items:center;justify-content:center}
+.mapbox .scene-routebar #origin{flex:1 1 180px;min-width:150px}
+</style>
+<script id="aurora-single-destination-flow">
+(()=>{
+ const mapbox=document.querySelector('.mapbox');
+ const toolbar=document.querySelector('.mapbox .scene-routebar');
+ const origin=document.getElementById('origin');
+ const originLabel=document.querySelector('label[for="origin"]');
+ const originToggle=document.getElementById('toggleOrigin');
+ if(!mapbox||!toolbar||!origin||!originLabel||!originToggle)return;
+ toolbar.appendChild(originLabel);
+ toolbar.appendChild(origin);
+ toolbar.appendChild(originToggle);
+ originToggle.onclick=()=>{
+   const open=!mapbox.classList.contains('origin-manual');
+   mapbox.classList.toggle('origin-manual',open);
+   originToggle.textContent=open?'Fechar origem alternativa':'＋ Definir outra origem';
+   originToggle.setAttribute('aria-expanded',String(open));
+   if(open)origin.focus();
+   else{origin.value='';document.getElementById('sceneOrigin').value='';}
+ };
+})();
+</script>
+
 </body></html>

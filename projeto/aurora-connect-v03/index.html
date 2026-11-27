@@ -634,4 +634,93 @@ document.getElementById('pauseTracking').onclick=()=>stopFollow(true);
  .mapbox.aurora-overview #route3D{min-height:36px;padding:8px 10px;font-size:10px}
 }
 </style>
+
+<style id="aurora-map-first">
+/* V03 — etapa atual: mapa 2D e rota em primeiro plano, interface enxuta */
+#origin,label[for="origin"]{display:none}
+aside.origin-manual #origin,aside.origin-manual label[for="origin"]{display:block}
+#useGps,.departure-field{display:none!important}
+#sceneOrigin,#sceneUseGps,#sceneDepartureTime,#travelMode,
+#mapSearch,#locate,#routeOverview,#route3D,#satellite,#toggleMiniMap,
+#vitoriaDemo,#vitoriaPause,.maptools>a,#simulateDrive{display:none!important}
+.mapbox,.mapbox.aurora-driving,.mapbox.aurora-overview{
+  position:relative;height:72vh;min-height:560px;overflow:hidden;
+}
+.mapbox #map,.mapbox.aurora-driving #map,.mapbox.aurora-overview #map{
+  display:block!important;visibility:visible!important;pointer-events:auto!important;
+  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+  z-index:2!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+.mapbox .scene3d,.mapbox.aurora-driving .scene3d,.mapbox.aurora-overview .scene3d{display:none!important}
+.mapbox .maptools{z-index:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mapbox .scene-routebar{width:min(680px,calc(100% - 12px));}
+.mapbox .scene-routebar #sceneDestination{flex:1 1 220px;min-width:150px}
+#sceneRouteGo{flex:0 0 auto!important;width:auto!important}
+#startTracking{display:inline-flex!important;align-items:center;justify-content:center;
+  min-height:40px;padding:10px 16px;background:#c8f169;color:#17220f;
+  border:0;border-radius:9px;font-weight:850;white-space:nowrap}
+#startTracking:disabled{opacity:.55}
+.mapbox .drive{z-index:550;bottom:12px;left:12px;max-width:min(380px,calc(100% - 24px))}
+@media(max-width:760px){
+ .mapbox,.mapbox.aurora-driving,.mapbox.aurora-overview{height:70vh;min-height:520px}
+ .mapbox .maptools{left:8px;right:8px;top:8px;max-height:28%;overflow:auto}
+ .mapbox .scene-routebar{width:100%;padding:6px}
+ .mapbox .scene-routebar #sceneDestination{flex:1 1 160px;min-width:120px}
+ #startTracking{min-height:38px;padding:9px 12px;font-size:11px}
+ .mapbox .drive{left:8px;bottom:8px;width:min(290px,calc(100% - 16px));max-width:calc(100% - 16px);padding:9px}
+}
+</style>
+<script id="aurora-map-first-flow">
+(()=>{
+ const origin=document.getElementById('origin');
+ const destination=document.getElementById('destination');
+ const sceneDestination=document.getElementById('sceneDestination');
+ const originToggle=document.getElementById('toggleOrigin');
+ const aside=document.querySelector('aside');
+ const start=document.getElementById('startTracking');
+ const toolbar=document.querySelector('.mapbox .maptools');
+ if(!origin||!destination||!sceneDestination||!toolbar||!start)return;
+
+ // GPS é a origem padrão; o campo só aparece quando o condutor pede outra origem.
+ origin.value='';
+ origin.readOnly=false;
+ originToggle.textContent='＋ Definir outra origem';
+ originToggle.setAttribute('aria-expanded','false');
+ originToggle.onclick=()=>{
+   const open=!aside.classList.contains('origin-manual');
+   aside.classList.toggle('origin-manual',open);
+   originToggle.textContent=open?'Fechar origem alternativa':'＋ Definir outra origem';
+   originToggle.setAttribute('aria-expanded',String(open));
+   if(open){origin.focus();}
+   else{origin.value='';document.getElementById('sceneOrigin').value='';}
+ };
+ document.getElementById('useGps').onclick=()=>{
+   origin.value='';
+   document.getElementById('sceneOrigin').value='';
+   aside.classList.remove('origin-manual');
+   originToggle.textContent='＋ Definir outra origem';
+   originToggle.setAttribute('aria-expanded','false');
+   notify('A origem será sua localização atual pelo GPS.');
+ };
+ destination.placeholder='Digite o destino (rua, bairro ou cidade)';
+ sceneDestination.placeholder='Destino: rua, bairro ou cidade';
+ destination.addEventListener('input',()=>sceneDestination.value=destination.value);
+ sceneDestination.addEventListener('input',()=>destination.value=sceneDestination.value);
+ const routeButton=document.getElementById('routeBtn');
+ if(routeButton)routeButton.textContent='Traçar trajeto →';
+ const sceneRouteButton=document.getElementById('sceneRouteGo');
+ if(sceneRouteButton)sceneRouteButton.textContent='Traçar trajeto';
+
+ // O botão de início fica no alto, junto ao campo de destino.
+ toolbar.appendChild(start);
+ start.textContent='▶ Iniciar navegação';
+ const sim=document.getElementById('simulateDrive');
+ if(sim)sim.remove();
+ const threeD=document.getElementById('route3D');
+ if(threeD)threeD.remove();
+ const mini=document.getElementById('toggleMiniMap');
+ if(mini)mini.remove();
+})();
+</script>
+
 </body></html>

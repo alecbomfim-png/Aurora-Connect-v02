@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aurora Connect · Central Virtual de Trânsito</title>
+<style>
+:root{color-scheme:dark;--bg:#07110f;--panel:#101d19;--line:#234238;--green:#43e08b;--muted:#9bb5a9}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#18392d,#07110f 55%);color:#effff5;font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:18px clamp(16px,4vw,42px);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:900;letter-spacing:.12em;color:var(--green)}.sub{color:var(--muted);font-size:12px;margin-top:4px}
+main{max-width:1240px;margin:auto;padding:22px clamp(12px,3vw,30px) 40px}
+h1{font-size:clamp(22px,4vw,34px);margin:0 0 8px}.intro{color:var(--muted);margin:0 0 20px;line-height:1.5}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+select,button,a.action{background:#14251f;color:#effff5;border:1px solid #315748;border-radius:10px;padding:11px 14px;font:inherit;text-decoration:none}
+button.primary{background:var(--green);color:#062014;border-color:var(--green);font-weight:800}
+.grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.8fr);gap:14px}
+.panel{background:linear-gradient(145deg,#13241e,#0c1713);border:1px solid var(--line);border-radius:16px;overflow:hidden;min-width:0}
+.panel h2{font-size:15px;margin:0;padding:14px 16px;border-bottom:1px solid var(--line)}
+.frame{height:clamp(260px,44vw,490px);background:#050b09;display:flex;align-items:center;justify-content:center;position:relative}
+.frame iframe{width:100%;height:100%;border:0;background:#0a1510}
+.frame .fallback{max-width:520px;padding:25px;text-align:center;color:var(--muted);line-height:1.6}
+.frame .fallback strong{display:block;color:#effff5;font-size:19px;margin-bottom:8px}
+.scene{height:clamp(260px,44vw,490px);position:relative;overflow:hidden;background:linear-gradient(#6b9db0 0%,#b5c9c2 48%,#385b4b 49%,#152b23 100%)}
+.horizon{position:absolute;bottom:48%;width:100%;height:18%;background:linear-gradient(90deg,#29483d,#6e8d79,#2e5041);clip-path:polygon(0 80%,10% 30%,20% 65%,32% 12%,45% 65%,58% 18%,73% 62%,88% 25%,100% 70%,100% 100%,0 100%)}
+.road{position:absolute;bottom:-8%;left:10%;width:80%;height:72%;background:linear-gradient(90deg,#202b29,#46504c 50%,#202b29);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
+.lane{position:absolute;bottom:0;left:50%;height:65%;width:5px;background:repeating-linear-gradient(to bottom,#e6e9dc 0 22px,transparent 22px 42px);transform:perspective(130px) rotateX(18deg);opacity:.8}
+.car{position:absolute;width:42px;height:22px;border-radius:9px 9px 5px 5px;background:#d8e3dd;border:2px solid #17221e;box-shadow:0 9px 12px #0007;animation:drive 8s linear infinite}
+.car:before{content:"";position:absolute;left:8px;right:8px;top:-7px;height:9px;background:#8daaa0;border:1px solid #17221e;border-radius:6px 6px 0 0}
+.c1{left:42%;bottom:16%;animation-duration:7s}.c2{left:57%;bottom:30%;background:#d2a45b;animation-duration:9s;animation-direction:reverse}.c3{left:35%;bottom:44%;background:#7194b5;animation-duration:11s}.c4{left:61%;bottom:12%;background:#d7ddd8;animation-duration:8.5s;animation-direction:reverse}
+@keyframes drive{0%{transform:translateY(60px) scale(.55)}100%{transform:translateY(-260px) scale(1.45)}}
+.overlay{position:absolute;left:12px;right:12px;top:12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.pill{background:#07130fdb;border:1px solid #3b6654;border-radius:99px;padding:7px 10px;font-size:11px;letter-spacing:.04em}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px}
+.stat{background:#0b1712;border:1px solid var(--line);border-radius:12px;padding:12px}.stat small{display:block;color:var(--muted);margin-bottom:5px}.stat b{font-size:17px}
+.note{padding:13px 16px;color:var(--muted);font-size:12px;line-height:1.5;border-top:1px solid var(--line)}
+.status{color:#ffcf78}.links{display:flex;gap:10px;flex-wrap:wrap;padding:14px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div><div class="brand">AURORA CONNECT · V03</div><div class="sub">CENTRAL VIRTUAL DE TRÂNSITO · SALVADOR / BAHIA</div></div><div class="pill">PROTÓTIPO DE OBSERVAÇÃO</div></header>
+<main>
+<h1>Trânsito ao vivo + visão virtual 3D</h1>
+<p class="intro">Escolha um ponto monitorado, consulte a fonte pública e acompanhe ao lado uma representação 3D do fluxo. A cena 3D abaixo é uma simulação visual; não é uma reconstrução automática da câmera real. O painel GAT+ é uma fonte complementar de indicadores de fluxo e velocidade, não uma transmissão de vídeo.</p>
+<div class="toolbar">
+<select id="camera" aria-label="Selecionar câmera">
+<option value="Avenida Presidente Castelo Branco — ligação com Bonocô">Avenida Presidente Castelo Branco — ligação com Bonocô</option>
+<option value="Bonocô — Estação do Metrô">Bonocô — Estação do Metrô</option>
+<option value="Avenida Paralela — marginal de acesso à Av. Luís Eduardo Magalhães">Paralela — marginal de acesso à Av. Luís Eduardo Magalhães</option>
+<option value="Avenida Orlando Gomes — Piatã">Orlando Gomes — Piatã</option>
+<option value="Praça João Mangabeira — Barris">Praça João Mangabeira — Barris</option>
+<option value="Boca do Rio — Avenida Jorge Amado">Boca do Rio — Jorge Amado</option>
+<option value="Rua Pernambuco com Avenida Manoel Dias — Pituba">Rua Pernambuco × Avenida Manoel Dias — Pituba</option>
+<option value="Avenida Paralela — Viaduto Eliana Kértesz">Paralela — Viaduto Eliana Kértesz</option>
+</select>
+<button class="primary" id="openSource">Abrir câmeras oficiais</button><a class="action" href="https://mobilidadesalvador.com.br/gat3/scorecardGAT.aspx" target="_blank" rel="noopener">Abrir painel GAT+</a><button id="pause">Pausar simulação</button>
+</div>
+<div class="grid">
+<section class="panel"><h2>01 · Fonte pública — Transalvador</h2><div class="frame"><div class="fallback"><strong>Imagem oficial da câmera</strong>O portal público disponibiliza a opção “Veja ao Vivo”. A incorporação direta do vídeo nesta página ainda depende de confirmar o endereço do fluxo e as permissões de reprodução.<br><br><a class="action" href="https://transalvador.salvador.ba.gov.br/" target="_blank" rel="noopener">Acessar portal Transalvador ↗</a></div></div><div class="note">Fonte externa: Transalvador. A seleção identifica o ponto de interesse. O portal oficial reúne as transmissões; não exibimos uma transmissão não verificada dentro deste quadro. O GAT+ oferece indicadores de fluidez e velocidade em trechos monitorados.</div></section>
+<section class="panel"><h2>02 · Representação virtual 3D</h2><div class="scene" id="scene"><div class="horizon"></div><div class="road"></div><div class="lane"></div><div class="car c1"></div><div class="car c2"></div><div class="car c3"></div><div class="car c4"></div><div class="overlay"><span class="pill">SIMULAÇÃO 3D</span><span class="pill" id="sceneName">BONOCÔ</span></div></div><div class="stats"><div class="stat"><small>Origem do movimento</small><b>Simulado</b></div><div class="stat"><small>Fluxo observado</small><b>Visual</b></div><div class="stat"><small>Atualização da câmera</small><b>Não conectada</b></div><div class="stat"><small>Sentidos</small><b>Dois sentidos</b></div></div><div class="note status">Atenção: os veículos animados não representam contagem ou velocidade medidas na câmera. A sincronização com dados reais será uma etapa posterior, condicionada ao acesso técnico aos dados.</div></section>
+</div>
+<div class="panel" style="margin-top:14px"><h2>Como vamos avançar</h2><div class="links"><span class="pill">1 · Validar imagem pública</span><span class="pill">2 · Identificar acesso autorizado ao fluxo</span><span class="pill">3 · Obter dados de velocidade/volume</span><span class="pill">4 · Sincronizar a cena 3D</span></div></div>
+</main>
+<script>
+const camera=document.getElementById('camera'), name=document.getElementById('sceneName'), pause=document.getElementById('pause');
+camera.addEventListener('change',()=>{name.textContent=camera.value.toUpperCase();});
+document.getElementById('openSource').addEventListener('click',()=>window.open('https://transalvador.salvador.ba.gov.br/','_blank','noopener'));
+let paused=false;pause.addEventListener('click',()=>{paused=!paused;document.getElementById('scene').style.animationPlayState=paused?'paused':'running';document.querySelectorAll('.car').forEach(c=>c.style.animationPlayState=paused?'paused':'running');pause.textContent=paused?'Retomar simulação':'Pausar simulação';});
+</script>
+</body></html>

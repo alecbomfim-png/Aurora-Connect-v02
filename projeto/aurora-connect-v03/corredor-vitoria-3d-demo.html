@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101711"><title>Aurora Connect · Corredor da Vitória 3D</title>
+<style>
+:root{--bg:#101711;--panel:#101913eF;--lime:#c8f169;--mint:#75d6a1;--text:#f1f5ef}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,sans-serif}
+.top{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#101812;border-bottom:1px solid #344337;position:relative;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;font-weight:850;letter-spacing:.2px}.logo{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--lime);color:#172117;font-size:20px}.brand span{color:var(--lime)}.live{font-size:10px;color:var(--mint);letter-spacing:1px}
+.scene{position:relative;height:calc(100dvh - 58px);min-height:420px;overflow:hidden;isolation:isolate;background:linear-gradient(#385b69 0%,#9bb5aa 36%,#6c8a6c 48%,#253a2a 100%)}
+.sun{position:absolute;right:15%;top:8%;width:70px;height:70px;border-radius:50%;background:#f3e7b7;box-shadow:0 0 60px #f3e7b766}
+.haze{position:absolute;inset:24% 0 auto;height:26%;background:linear-gradient(180deg,#d8dfc1aa,transparent)}
+.hills{position:absolute;left:-5%;right:-5%;top:31%;height:23%;background:linear-gradient(155deg,transparent 0 18%,#506c50 18.5% 45%,transparent 45.5%),linear-gradient(25deg,transparent 0 22%,#71815d 22.5% 54%,transparent 54.5%);opacity:.8}
+.skyline{position:absolute;inset:18% 0 42%;display:flex;align-items:flex-end;justify-content:space-around;gap:1%;padding:0 1%;perspective:700px}
+.building{height:80%;flex:1;max-width:16%;background:linear-gradient(90deg,#53675c,#b0aa8d 48%,#536456);clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);box-shadow:inset 0 0 24px #17241b}
+.building:nth-child(2){height:95%;background:linear-gradient(90deg,#58685d,#c1b99a,#4c6255)}.building:nth-child(3){height:67%}.building:nth-child(4){height:88%;background:linear-gradient(90deg,#53665b,#a9a58a,#42594b)}.building:nth-child(5){height:75%}
+.building:after{content:"";display:block;width:100%;height:100%;background:repeating-linear-gradient(90deg,transparent 0 15px,#26382c 16px 19px,transparent 20px 27px),repeating-linear-gradient(0deg,transparent 0 20px,#26382c 21px 24px,transparent 25px 32px);opacity:.48}
+.palms{position:absolute;inset:28% 0 35%;pointer-events:none;background:radial-gradient(ellipse at 8% 30%,#183b27 0 5%,transparent 5.5%),radial-gradient(ellipse at 91% 26%,#173b27 0 6%,transparent 6.5%),linear-gradient(86deg,transparent 8%,#493f2b 8.3% 8.6%,transparent 9%),linear-gradient(94deg,transparent 91%,#493f2b 91.3% 91.6%,transparent 92%)}
+.road{position:absolute;left:50%;bottom:-5%;width:min(94%,1100px);height:73%;transform:translateX(-50%);background:linear-gradient(90deg,#303638,#55595a 48%,#34393a);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);box-shadow:0 0 45px #0009}
+.road:before,.road:after{content:"";position:absolute;top:0;height:100%;width:4px;background:#dedfc9;opacity:.9}.road:before{left:42%}.road:after{right:42%}
+.center{position:absolute;left:50%;bottom:0;width:5px;height:100%;transform:translateX(-50%);background:repeating-linear-gradient(to bottom,#f5f0c9 0 26px,transparent 26px 54px);clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);animation:roadFlow 1.3s linear infinite}
+@keyframes roadFlow{to{background-position:0 54px}}
+.car{position:absolute;z-index:5;width:clamp(25px,4vw,54px);filter:drop-shadow(0 5px 5px #0009);will-change:transform}
+.car svg{width:100%;height:auto}.outbound{left:56%;top:48%;animation:away 7s linear infinite}.outbound.c2{left:61%;animation-duration:9s;animation-delay:-4s;width:clamp(20px,3vw,42px)}.return{left:42%;top:48%;animation:coming 7.5s linear infinite}.return.c2{left:36%;animation-duration:9.5s;animation-delay:-5s;width:clamp(20px,3vw,42px)}
+@keyframes away{0%{transform:translateY(150px) scale(1.25);opacity:1}100%{transform:translateY(-125px) scale(.2);opacity:.08}}
+@keyframes coming{0%{transform:translateY(-125px) scale(.2);opacity:.08}45%{opacity:1}100%{transform:translateY(155px) scale(1.28);opacity:1}}
+.player{position:absolute;z-index:8;bottom:5%;left:50%;transform:translateX(-50%);width:clamp(100px,16vw,150px);filter:drop-shadow(0 12px 8px #0009)}
+.player svg{width:100%}
+.hud{position:absolute;z-index:12;top:14px;left:14px;max-width:min(360px,calc(100% - 28px));padding:11px 14px;border:1px solid #60734f;border-radius:13px;background:var(--panel);backdrop-filter:blur(8px);box-shadow:0 6px 22px #0007}
+.hud strong{display:block;color:var(--lime);font-size:12px;letter-spacing:.6px}.hud span{display:block;margin-top:3px;font-size:11px;color:#e5eee2}
+.controls{position:absolute;z-index:15;top:14px;right:14px;display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;max-width:48%}
+button{border:1px solid #667b50;border-radius:10px;background:#101913ed;color:#f1f5ef;padding:9px 12px;font:600 11px system-ui;cursor:pointer}button.primary{background:var(--lime);color:#142016;border-color:var(--lime)}
+.bottom{position:absolute;z-index:12;left:14px;bottom:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{padding:8px 11px;border:1px solid #52634a;border-radius:10px;background:#101913eF;font-size:10px;color:#e9f0e5}.pill b{color:var(--lime)}
+.watermark{position:absolute;right:14px;bottom:16px;z-index:10;color:#eaf2e0aa;font-size:9px;letter-spacing:1px}
+.paused .center,.paused .car{animation-play-state:paused!important}
+.night{filter:brightness(.66) saturate(.8)}.night .sun{opacity:.15}.night .scene{background:linear-gradient(#101c2c 0%,#344c55 38%,#27382d 55%,#111b14 100%)}
+@media(max-width:650px){.top{height:52px;padding:0 10px}.scene{height:calc(100dvh - 52px)}.brand{font-size:12px}.live{font-size:8px}.hud{top:70px;left:8px;padding:8px 10px}.hud strong{font-size:10px}.hud span{font-size:9px}.controls{top:8px;right:8px;max-width:55%;gap:5px}.controls button{padding:8px;font-size:9px}.bottom{left:8px;bottom:9px;gap:5px}.pill{font-size:8px;padding:7px 8px}.watermark{display:none}.building{max-width:19%}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand"><div class="logo">A</div><div>AURORA <span>CONNECT</span> · V03</div></div><div class="live">● SIMULAÇÃO 3D</div></header>
+<main class="scene" id="scene" aria-label="Simulação 3D do Corredor da Vitória, Salvador">
+<div class="sun"></div><div class="haze"></div><div class="hills"></div>
+<div class="skyline"><div class="building"></div><div class="building"></div><div class="building"></div><div class="building"></div><div class="building"></div></div><div class="palms"></div>
+<div class="road"><div class="center"></div></div>
+<div class="car outbound"><svg viewBox="0 0 100 120"><path d="M23 35Q25 13 40 9H61Q76 13 78 35L91 98Q91 109 80 111H20Q9 109 9 98Z" fill="#d6ddd8" stroke="#1c2524" stroke-width="5"/><path d="M29 34L35 17H65L71 34Z" fill="#293d43"/><rect x="20" y="46" width="60" height="37" rx="7" fill="#87918e"/></svg></div>
+<div class="car outbound c2"><svg viewBox="0 0 100 120"><path d="M23 35Q25 13 40 9H61Q76 13 78 35L91 98Q91 109 80 111H20Q9 109 9 98Z" fill="#8fb7d0" stroke="#1c2524" stroke-width="5"/><path d="M29 34L35 17H65L71 34Z" fill="#293d43"/><rect x="20" y="46" width="60" height="37" rx="7" fill="#657c87"/></svg></div>
+<div class="car return"><svg viewBox="0 0 100 120"><path d="M23 35Q25 13 40 9H61Q76 13 78 35L91 98Q91 109 80 111H20Q9 109 9 98Z" fill="#e8bd62" stroke="#1c2524" stroke-width="5"/><path d="M29 34L35 17H65L71 34Z" fill="#293d43"/><rect x="20" y="46" width="60" height="37" rx="7" fill="#87918e"/></svg></div>
+<div class="car return c2"><svg viewBox="0 0 100 120"><path d="M23 35Q25 13 40 9H61Q76 13 78 35L91 98Q91 109 80 111H20Q9 109 9 98Z" fill="#9acb84" stroke="#1c2524" stroke-width="5"/><path d="M29 34L35 17H65L71 34Z" fill="#293d43"/><rect x="20" y="46" width="60" height="37" rx="7" fill="#657c68"/></svg></div>
+<div class="player"><svg viewBox="0 0 140 100"><path d="M14 72L23 38Q27 25 43 21H97Q112 24 118 39L128 72Q133 83 122 88H18Q7 84 14 72Z" fill="#9ccf74" stroke="#17251a" stroke-width="6"/><path d="M37 38Q41 29 51 29H91Q101 31 105 39L112 57H29Z" fill="#263b3d" stroke="#17251a" stroke-width="3"/><path d="M12 69H128" stroke="#d7e5bb" stroke-width="3"/><rect x="18" y="72" width="17" height="9" rx="3" fill="#f4f0d2"/><rect x="105" y="72" width="17" height="9" rx="3" fill="#f4f0d2"/><rect x="24" y="85" width="22" height="9" rx="3" fill="#101412"/><rect x="94" y="85" width="22" height="9" rx="3" fill="#101412"/></svg></div>
+<section class="hud"><strong>AVENIDA SETE DE SETEMBRO · CORREDOR DA VITÓRIA</strong><span>Salvador · Bahia · cenário virtual demonstrativo</span><span id="trafficState">Tráfego simulado nos dois sentidos</span></section>
+<div class="controls"><button id="pause">Ⅱ Pausar movimento</button><button id="density">＋ Mais veículos</button><button id="night">☾ Noite</button><button class="primary" id="restart">↻ Reiniciar</button></div>
+<div class="bottom"><div class="pill"><b>3D</b> · Perspectiva da via</div><div class="pill">↗ Sentido centro</div><div class="pill">↙ Sentido Garibaldi</div><div class="pill" id="count">4 veículos virtuais</div></div>
+<div class="watermark">AURORA LAB · TRÂNSITO SIMULADO</div>
+</main>
+<script>
+const scene=document.getElementById('scene'),pause=document.getElementById('pause'),density=document.getElementById('density'),night=document.getElementById('night'),count=document.getElementById('count');
+let paused=false,extra=false,isNight=false;
+pause.addEventListener('click',()=>{paused=!paused;scene.classList.toggle('paused',paused);pause.textContent=paused?'▶ Retomar movimento':'Ⅱ Pausar movimento';document.getElementById('trafficState').textContent=paused?'Movimento pausado pelo usuário':'Tráfego simulado nos dois sentidos';});
+density.addEventListener('click',()=>{extra=!extra;let cars=scene.querySelectorAll('.extra-car');cars.forEach(c=>c.remove());if(extra){const colors=['#d2a1d0','#d9d9d0'];['outbound','return'].forEach((dir,i)=>{const el=document.createElement('div');el.className='car extra-car '+dir;el.style.left=i?'32%':'64%';el.style.animationDuration=(6.2+i*.8)+'s';el.innerHTML='<svg viewBox="0 0 100 120"><path d="M23 35Q25 13 40 9H61Q76 13 78 35L91 98Q91 109 80 111H20Q9 109 9 98Z" fill="'+colors[i]+'" stroke="#1c2524" stroke-width="5"/><path d="M29 34L35 17H65L71 34Z" fill="#293d43"/><rect x="20" y="46" width="60" height="37" rx="7" fill="#87918e"/></svg>';scene.appendChild(el);});}count.textContent=extra?'6 veículos virtuais':'4 veículos virtuais';});
+night.addEventListener('click',()=>{isNight=!isNight;scene.classList.toggle('night',isNight);night.textContent=isNight?'☀ Dia':'☾ Noite';});
+document.getElementById('restart').addEventListener('click',()=>{paused=false;extra=false;isNight=false;scene.classList.remove('paused','night');scene.querySelectorAll('.extra-car').forEach(c=>c.remove());pause.textContent='Ⅱ Pausar movimento';night.textContent='☾ Noite';count.textContent='4 veículos virtuais';document.getElementById('trafficState').textContent='Tráfego simulado nos dois sentidos';});
+</script>
+</body></html>
